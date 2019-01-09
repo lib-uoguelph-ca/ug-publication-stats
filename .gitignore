@@ -3,3 +3,4 @@ venv/
 secrets.py
 ugps.db
 __pycache__/
+*.log

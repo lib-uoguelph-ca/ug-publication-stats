@@ -1,7 +1,9 @@
 from wos import WosClient
 import wos.utils
+import logging
 
 import secrets
+from unpaywall import UnpaywallClient
 from models import *
 
 
@@ -41,8 +43,16 @@ def get_dois():
 
 
 init_db()
-
 dois = get_dois()
 
+logger = logging.getLogger('UGPS')
+logger.addHandler(logging.FileHandler('ugps.log'))
+uc = UnpaywallClient('doana@uoguelph.ca', logger)
+
+data = []
 for doi in dois:
-    pass
+    record = uc.lookup(doi)
+    if record:
+        data.append(record)
+
+print(data)
