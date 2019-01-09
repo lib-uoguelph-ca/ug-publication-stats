@@ -2,6 +2,7 @@ import urllib.request, urllib.parse
 from urllib.error import URLError
 import json
 
+
 class UnpaywallClient:
 
     def __init__(self, email, logger=None):
@@ -22,3 +23,7 @@ class UnpaywallClient:
 
         data = response.read()
         return json.loads(data)
+
+    def fetchall(self, dois):
+        for doi in dois:
+            yield self.lookup(doi)

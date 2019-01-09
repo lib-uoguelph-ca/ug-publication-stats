@@ -46,13 +46,13 @@ init_db()
 dois = get_dois()
 
 logger = logging.getLogger('UGPS')
-logger.addHandler(logging.FileHandler('ugps.log'))
+handler = logging.FileHandler('ugps.log')
+handler.setFormatter(logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s', datefmt='%d-%m-%Y %H:%M:%S'))
+logger.addHandler(handler)
+
 uc = UnpaywallClient('doana@uoguelph.ca', logger)
 
-data = []
-for doi in dois:
-    record = uc.lookup(doi)
+for record in uc.fetchall(dois):
     if record:
-        data.append(record)
+        print(record)
 
-print(data)
