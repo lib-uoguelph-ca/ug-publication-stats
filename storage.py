@@ -25,20 +25,22 @@ def clean_db():
 
 
 def persist(record):
-    create_authors(record)
-    create_article(record)
-    associate_authors(record)
+    authors = create_authors(record)
+    article = create_article(record)
+    associate_authors(article, authors)
 
 
 def create_authors(record):
     authors = record.get_authors()
 
     author_list = []
+    # TODO: Individual authors should be implemented as some sort of value object,
+    #       to prevent the Unpaywall API implementation from leaking into this class.
     for author in authors:
         result = Author.get_or_create(first_name=author['given'], last_name=author['family'])
         author_list.append(result[0])
 
-    return authors
+    return author_list
 
 
 def create_publisher(record):
@@ -55,23 +57,21 @@ def create_article(record):
     journal = create_journal(record)
     publisher = create_publisher(record)
 
-
-
     result = Article.get_or_create(
         title=record.get_title(),
         year=record.get_year(),
         journal=journal,
         publisher=publisher,
-        oa = record.is_oa(),
-        hybrid = record.is_hybrid(),
-        bronze = record.is_bronze(),
-        self_archived = record.get_self_archived(),
+        oa=record.is_oa(),
+        hybrid=record.is_hybrid(),
+        bronze=record.is_bronze(),
+        self_archived=record.get_self_archived(),
         doi_url=record.get_doi()
     )
 
-    return result
+    return result[0]
 
 
-def associate_authors(record):
-    pass
-
+def associate_authors(article, authors):
+    for author in authors:
+        Authored.get_or_create(author=author, article=article)
