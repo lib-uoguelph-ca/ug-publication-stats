@@ -30,9 +30,13 @@ class Article(BaseModel):
     hybrid = BooleanField(null=True)
     bronze = BooleanField(null=True)
     self_archived = SmallIntegerField(null=True)
-    url = CharField(null=True)
+    doi_url = CharField(null=True)
 
 class Authored(BaseModel):
     author = ForeignKeyField(Author, backref='articles')
     article = ForeignKeyField(Article, backref='authors')
+
+class Published(BaseModel):
+    article = ForeignKeyField(Article, backref='article')
+    url = CharField(null=True)
 

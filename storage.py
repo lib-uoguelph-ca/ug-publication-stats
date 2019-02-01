@@ -11,7 +11,7 @@ def init_db():
 
     db = SqliteDatabase('ugps.db')
     with db:
-        db.create_tables([Author, Publisher, Journal, Article, Authored])
+        db.create_tables([Author, Publisher, Journal, Article, Authored, Published])
 
     return db
 
