@@ -2,5 +2,6 @@
 # Before you put all your secret data into this file, make a copy and rename it to secrets.py.
 # Also, make sure that your credentials aren't added to source control!
 
+UNPAYWALL_EMAIL = ''
 WOS_USER = ''
 WOS_PASS = ''
