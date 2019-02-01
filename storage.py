@@ -11,7 +11,7 @@ def init_db():
 
     db = SqliteDatabase('ugps.db')
     with db:
-        db.create_tables([Author, Publisher, Journal, Article, Authored, Published])
+        db.create_tables([Author, Publisher, Journal, Article, Authored, Location])
 
     return db
 
@@ -28,6 +28,7 @@ def persist(record):
     authors = create_authors(record)
     article = create_article(record)
     associate_authors(article, authors)
+    create_locations(record, article)
 
 
 def create_authors(record):
@@ -75,3 +76,10 @@ def create_article(record):
 def associate_authors(article, authors):
     for author in authors:
         Authored.get_or_create(author=author, article=article)
+
+
+def create_locations(record, article):
+    locations = record.get_locations()
+
+    for location in locations:
+        Location.get_or_create(article=article, url=location['url'])

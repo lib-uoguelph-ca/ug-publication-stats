@@ -36,7 +36,7 @@ class Authored(BaseModel):
     author = ForeignKeyField(Author, backref='articles')
     article = ForeignKeyField(Article, backref='authors')
 
-class Published(BaseModel):
+class Location(BaseModel):
     article = ForeignKeyField(Article, backref='article')
     url = CharField(null=True)
 
