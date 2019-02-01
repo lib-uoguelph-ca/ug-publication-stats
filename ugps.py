@@ -5,6 +5,7 @@ import logging
 import secrets
 from unpaywall import UnpaywallClient
 from models import *
+from storage import persist
 
 
 # with WosClient(secrets.WOS_USER, secrets.WOS_PASS) as client:
@@ -54,5 +55,8 @@ uc = UnpaywallClient('doana@uoguelph.ca', logger)
 
 for record in uc.fetchall(dois):
     if record:
+
         print(record)
+        persist(record)
+
 
