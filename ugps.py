@@ -3,16 +3,12 @@ import wos.utils
 import logging
 
 import secrets
-from unpaywall import UnpaywallClient
-from models import *
+from unpaywall import UnpaywallClient, UnpaywallParser
 from storage import persist, init_db, clean_db
 
 
 # with WosClient(secrets.WOS_USER, secrets.WOS_PASS) as client:
 #     print(wos.utils.query(client, 'OG="University of Guelph"'))
-
-
-
 
 
 def get_dois():
@@ -30,8 +26,10 @@ def get_dois():
 
     return dois
 
-clean_db()
+
 init_db()
+clean_db()
+
 
 dois = get_dois()
 
@@ -42,10 +40,14 @@ logger.addHandler(handler)
 
 uc = UnpaywallClient('doana@uoguelph.ca', logger)
 
-for record in uc.fetchall(dois):
-    if record:
+for result in uc.fetchall(dois):
 
-        print(record)
-        persist(record)
+    if not result:
+        continue
+
+    print(result)
+
+    record = UnpaywallParser(result)
+    persist(record)
 
 
