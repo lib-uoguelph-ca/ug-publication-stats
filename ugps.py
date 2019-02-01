@@ -5,26 +5,14 @@ import logging
 import secrets
 from unpaywall import UnpaywallClient
 from models import *
-from storage import persist
+from storage import persist, init_db, clean_db
 
 
 # with WosClient(secrets.WOS_USER, secrets.WOS_PASS) as client:
 #     print(wos.utils.query(client, 'OG="University of Guelph"'))
 
 
-def init_db():
-    """
-    Initialize the database, creating the tables if not already present
 
-    :return: A peewee database object
-    """
-    from peewee import SqliteDatabase
-
-    db = SqliteDatabase('ugps.db')
-    with db:
-        db.create_tables([Author, Publisher, Journal, Article, Authored])
-
-    return db
 
 
 def get_dois():
@@ -42,8 +30,9 @@ def get_dois():
 
     return dois
 
-
+clean_db()
 init_db()
+
 dois = get_dois()
 
 logger = logging.getLogger('UGPS')

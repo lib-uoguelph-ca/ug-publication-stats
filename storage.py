@@ -2,6 +2,29 @@ from models import *
 import datetime
 
 
+def init_db():
+    """
+    Initialize the database, creating the tables if not already present
+
+    :return: A peewee database object
+    """
+    from peewee import SqliteDatabase
+
+    db = SqliteDatabase('ugps.db')
+    with db:
+        db.create_tables([Author, Publisher, Journal, Article, Authored])
+
+    return db
+
+
+def clean_db():
+    Author.delete().execute()
+    Publisher.delete().execute()
+    Journal.delete().execute()
+    Authored.delete().execute()
+    Article.delete().execute()
+
+
 def persist(record):
     create_authors(record)
     create_article(record)
@@ -23,9 +46,11 @@ def create_publisher(record):
     result = Publisher.get_or_create(name=record['publisher'])
     return result[0]
 
+
 def create_journal(record):
     result = Journal.get_or_create(name=record['publisher'])
     return result[0]
+
 
 def create_article(record):
     journal = create_journal(record)
@@ -50,6 +75,7 @@ def create_article(record):
     )
 
     return result
+
 
 def associate_authors(record):
     pass
