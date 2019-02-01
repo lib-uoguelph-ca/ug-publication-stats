@@ -81,5 +81,7 @@ def associate_authors(article, authors):
 def create_locations(record, article):
     locations = record.get_locations()
 
+    # TODO: Locations should be implemented as some sort of value object,
+    #       to prevent the Unpaywall API implementation from leaking into this class.
     for location in locations:
         Location.get_or_create(article=article, url=location['url'])
