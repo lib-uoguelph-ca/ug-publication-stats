@@ -4,6 +4,8 @@ from unpaywall import UnpaywallClient, UnpaywallParser
 from webofscience import get_dois
 from storage import persist, init_db, clean_db
 import secrets
+from report.reporting import Reporter
+from report.reports import *
 
 logger = logging.getLogger('UGPS')
 handler = logging.FileHandler('ugps.log')
@@ -26,8 +28,18 @@ def fetch(logger):
         record = UnpaywallParser(result)
         persist(record)
 
+
 def report(report):
-    pass
+    reporter = Reporter()
+    reporter.register_all()
+
+    if report == 'list':
+        for r in reporter.list():
+            print(r)
+
+    if report == 'all':
+        reporter.all()
+
 
 cli = argparse.ArgumentParser(description='Fetch UG OA data and run reports.')
 cli.add_argument('--fetch', action='store_true', help='Fetch data from data sources.')
