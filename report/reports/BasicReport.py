@@ -2,8 +2,12 @@ from report.reporting import Report
 
 
 class BasicReport(Report):
+    """
+    A basic stub report for testing.
+    """
+
     name = "Basic Report"
     description = "Just the basics"
 
     def run(self):
-        pass
+        print("Running basic report")

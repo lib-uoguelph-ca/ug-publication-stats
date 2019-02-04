@@ -36,9 +36,12 @@ def report(report):
     if report == 'list':
         for r in reporter.list():
             print(r)
-
-    if report == 'all':
+    elif report == 'all':
         reporter.all()
+    else:
+        reporter.report(report)
+
+
 
 
 cli = argparse.ArgumentParser(description='Fetch UG OA data and run reports.')
