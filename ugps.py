@@ -6,6 +6,7 @@ from storage import persist, init_db, clean_db
 import secrets
 from report.reporting import Reporter
 from report.reports import *
+from report.writer import CSVReportWriter
 
 logger = logging.getLogger('UGPS')
 handler = logging.FileHandler('ugps.log')
@@ -13,12 +14,12 @@ handler.setFormatter(logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(messag
 logger.addHandler(handler)
 
 
-def fetch(logger):
+def fetch(logger, args):
     init_db()
     clean_db()
 
     dois = get_dois()
-    uc = UnpaywallClient(secrets.UNPAYWALL_EMAIL, logger)
+    uc = UnpaywallClient(args.email, logger)
     for result in uc.fetchall(dois):
         if not result:
             continue
@@ -29,8 +30,9 @@ def fetch(logger):
         persist(record)
 
 
-def report(report):
-    reporter = Reporter()
+def report(report, outfile):
+    writer = CSVReportWriter(outfile)
+    reporter = Reporter(writer)
     reporter.register_all()
 
     if report == 'list':
@@ -46,13 +48,14 @@ def report(report):
 
 cli = argparse.ArgumentParser(description='Fetch UG OA data and run reports.')
 cli.add_argument('--fetch', action='store_true', help='Fetch data from data sources.')
-cli.add_argument('-e', action='store', default=secrets.UNPAYWALL_EMAIL)
+cli.add_argument('--email', '-e', action='store', default=secrets.UNPAYWALL_EMAIL)
 cli.add_argument('-wosuser', action='store', default=secrets.WOS_USER)
 cli.add_argument('-wospass', action='store', default=secrets.WOS_PASS)
 cli.add_argument('-v', action='store_true')
 cli.add_argument('-vv', action='store_true')
 
 cli.add_argument('--report', action='store', help='Run reports', nargs='?', const="list", default=False)
+cli.add_argument('-output', '-o', action='store', default="output/out.csv")
 args = cli.parse_args()
 
 logger = logging.getLogger('UGPS')
@@ -68,7 +71,7 @@ handler.setFormatter(logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(messag
 logger.addHandler(handler)
 
 if args.fetch:
-    fetch(logger)
+    fetch(logger, args)
 
 if args.report:
-    report(args.report)
+    report(args.report, args.output)

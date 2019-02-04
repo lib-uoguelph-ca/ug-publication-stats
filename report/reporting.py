@@ -6,8 +6,9 @@ class Reporter:
     A class to manage and run reports
     """
 
-    def __init__(self):
+    def __init__(self, writer):
         self.reports = {}
+        self.writer = writer
 
     def list(self):
         """
@@ -22,7 +23,7 @@ class Reporter:
         """
         for name, cls in self.reports.items():
             report = cls()
-            report.run()
+            report.run(self.writer)
 
     def report(self, report):
         """
@@ -31,7 +32,7 @@ class Reporter:
         """
         if report in self.reports:
             r = self.reports[report]()
-            r.run()
+            r.run(self.writer)
 
     def register(self, report):
         """
@@ -67,5 +68,5 @@ class Report(ABC):
         return f"{cls.name}: {cls.description}"
 
     @abstractmethod
-    def run(self):
+    def run(self, writer):
         pass
