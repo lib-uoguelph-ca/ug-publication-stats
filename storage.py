@@ -17,6 +17,9 @@ def init_db():
 
 
 def clean_db():
+    """
+    Remove all rows from all tables.
+    """
     Author.delete().execute()
     Publisher.delete().execute()
     Journal.delete().execute()
@@ -25,6 +28,10 @@ def clean_db():
 
 
 def persist(record):
+    """
+    Save a record to the database.
+    :param record: A dictionary representing a record.
+    """
     authors = create_authors(record)
     article = create_article(record)
     associate_authors(article, authors)
