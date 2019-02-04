@@ -26,6 +26,8 @@ def fetch(logger):
         record = UnpaywallParser(result)
         persist(record)
 
+def report(report):
+    pass
 
 cli = argparse.ArgumentParser(description='Fetch UG OA data and run reports.')
 cli.add_argument('--fetch', action='store_true', help='Fetch data from data sources.')
@@ -34,8 +36,9 @@ cli.add_argument('-wosuser', action='store', default=secrets.WOS_USER)
 cli.add_argument('-wospass', action='store', default=secrets.WOS_PASS)
 cli.add_argument('-v', action='store_true')
 cli.add_argument('-vv', action='store_true')
-args = cli.parse_args()
 
+cli.add_argument('--report', action='store', help='Run reports', nargs='?', const="list", default=False)
+args = cli.parse_args()
 
 logger = logging.getLogger('UGPS')
 handler = logging.FileHandler('ugps.log')
@@ -51,3 +54,6 @@ logger.addHandler(handler)
 
 if args.fetch:
     fetch(logger)
+
+if args.report:
+    report(args.report)
