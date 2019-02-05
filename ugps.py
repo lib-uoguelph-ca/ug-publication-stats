@@ -6,7 +6,6 @@ from storage import persist, init_db, clean_db
 import secrets
 from report.reporting import Reporter
 from report.reports import *
-from report.writer import CSVReportWriter
 
 logger = logging.getLogger('UGPS')
 handler = logging.FileHandler('ugps.log')
@@ -31,8 +30,7 @@ def fetch(logger, args):
 
 
 def report(report, outfile):
-    writer = CSVReportWriter(outfile)
-    reporter = Reporter(writer)
+    reporter = Reporter(outfile)
     reporter.register_all()
 
     if report == 'list':
@@ -42,8 +40,6 @@ def report(report, outfile):
         reporter.all()
     else:
         reporter.report(report)
-
-
 
 
 cli = argparse.ArgumentParser(description='Fetch UG OA data and run reports.')

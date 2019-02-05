@@ -6,9 +6,10 @@ class Reporter:
     A class to manage and run reports
     """
 
-    def __init__(self, writer):
+    def __init__(self, outfile):
         self.reports = {}
-        self.writer = writer
+        self.outfile = outfile
+
 
     def list(self):
         """
@@ -23,7 +24,7 @@ class Reporter:
         """
         for name, cls in self.reports.items():
             report = cls()
-            report.run(self.writer)
+            report.run(self.outfile)
 
     def report(self, report):
         """
@@ -32,7 +33,7 @@ class Reporter:
         """
         if report in self.reports:
             r = self.reports[report]()
-            r.run(self.writer)
+            r.run(self.outfile)
 
     def register(self, report):
         """
@@ -60,6 +61,8 @@ class Report(ABC):
     name = ""
     description = ""
 
+    mapping = {}
+
     def __str__(self):
         return f"{self.name}: {self.description}"
 
@@ -68,5 +71,22 @@ class Report(ABC):
         return f"{cls.name}: {cls.description}"
 
     @abstractmethod
-    def run(self, writer):
+    def run(self, outfile):
         pass
+
+    def get_values(self, record):
+        result = {}
+        for key, val in self.mapping.items():
+            result[key] = self.get_value(record, key)
+        return result
+
+    def get_value(self, record, key):
+        if isinstance(self.mapping[key], str):
+            return getattr(record,self.mapping[key])
+        elif callable(self.mapping[key]):
+            return self.mapping[key](record)
+        elif self.mapping[key] is None:
+            return ''
+        else:
+            return ''
+
