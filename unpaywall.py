@@ -90,6 +90,9 @@ class UnpaywallParser:
     def get_journal_title(self):
         return self.record['journal_name']
 
+    def get_type(self):
+        return self.record['genre']
+
     def get_publisher(self):
         return self.record['publisher']
 
@@ -109,6 +112,9 @@ class UnpaywallParser:
         return self.green
 
     def get_doi(self):
+        return self.record['doi']
+
+    def get_doi_url(self):
         return self.record['doi_url']
 
     def get_locations(self):

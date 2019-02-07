@@ -67,6 +67,7 @@ def create_article(record):
 
     result = Article.get_or_create(
         title=record.get_title(),
+        type=record.get_type(),
         year=record.get_year(),
         journal=journal,
         publisher=publisher,
@@ -74,7 +75,8 @@ def create_article(record):
         hybrid=record.is_hybrid(),
         bronze=record.is_bronze(),
         self_archived=record.get_self_archived(),
-        doi_url=record.get_doi()
+        doi=record.get_doi(),
+        doi_url=record.get_doi_url()
     )
 
     return result[0]

@@ -23,6 +23,7 @@ class Journal(BaseModel):
 
 class Article(BaseModel):
     title = CharField()
+    type = CharField(null=True)
     publisher = ForeignKeyField(Publisher, backref='articles')
     journal = ForeignKeyField(Journal, backref='articles')
     year = SmallIntegerField(null=True)
@@ -30,6 +31,7 @@ class Article(BaseModel):
     hybrid = BooleanField(null=True)
     bronze = BooleanField(null=True)
     self_archived = SmallIntegerField(null=True)
+    doi = CharField(null=True)
     doi_url = CharField(null=True)
 
 class Authored(BaseModel):

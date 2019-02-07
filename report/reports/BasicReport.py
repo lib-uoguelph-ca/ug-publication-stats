@@ -20,6 +20,7 @@ class BasicReport(Report):
         'hybrid': 'hybrid',
         'bronze': 'bronze',
         'self_archived': 'self_archived',
+        'doi': 'doi',
         'doi_url': 'doi_url'
     }
 
