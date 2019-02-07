@@ -10,6 +10,7 @@ class BaseModel(Model):
 class Author(BaseModel):
     first_name = CharField()
     last_name = CharField()
+    orcid = CharField(null=True)
     affiliation = CharField(null=True)
 
 
@@ -26,6 +27,7 @@ class Article(BaseModel):
     type = CharField(null=True)
     publisher = ForeignKeyField(Publisher, backref='articles')
     journal = ForeignKeyField(Journal, backref='articles')
+    date = DateField(null=True)
     year = SmallIntegerField(null=True)
     oa = BooleanField(null=True)
     hybrid = BooleanField(null=True)

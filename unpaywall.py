@@ -78,14 +78,11 @@ class UnpaywallParser:
     def get_title(self):
         return self.record['title']
 
+    def get_date(self):
+        return self.record['published_date']
+
     def get_year(self):
-        date_str = self.record['published_date']
-
-        if date_str:
-            pub_date = datetime.datetime.strptime(date_str, '%Y-%m-%d')
-            return pub_date.year
-
-        return None
+        return self.record['year']
 
     def get_journal_title(self):
         return self.record['journal_name']
