@@ -42,18 +42,12 @@ def create_authors(record):
     authors = record.get_authors()
 
     author_list = []
-    # TODO: Individual authors should be implemented as some sort of value object,
-    #       to prevent the Unpaywall API implementation from leaking into this class.
     for author in authors:
-
-        orcid = get_optional_value(author, 'ORCID')
-        affiliation = get_optional_value(author, 'affiliation')
-
         result = Author.get_or_create(
-            first_name=author['given'],
-            last_name=author['family'],
-            orcid=orcid,
-            affiliation=affiliation
+            first_name=author.get_first_name(),
+            last_name=author.get_last_name(),
+            orcid=author.get_orcid(),
+            affiliation=author.get_affiliations()
         )
         author_list.append(result[0])
 
@@ -104,11 +98,3 @@ def create_locations(record, article):
     #       to prevent the Unpaywall API implementation from leaking into this class.
     for location in locations:
         Location.get_or_create(article=article, url=location['url'])
-
-
-def get_optional_value(object, key):
-    value = None
-    if key in object:
-        value = object[key]
-
-    return value

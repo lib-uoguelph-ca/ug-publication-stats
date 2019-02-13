@@ -118,4 +118,36 @@ class UnpaywallParser:
         return self.record['oa_locations']
 
     def get_authors(self):
-        return self.record['z_authors']
+        authors = [UnpaywallAuthor(author) for author in self.record['z_authors']]
+        return authors
+
+
+class UnpaywallAuthor:
+    def __init__(self, author):
+        self.record = author
+
+    def get_first_name(self):
+        return self.get_value('given')
+
+    def get_last_name(self):
+        return self.get_value('family')
+
+    def get_orcid(self):
+        return self.get_value('ORCID')
+
+    def get_affiliations(self):
+        values = self.get_value('affiliation')
+
+        if not values:
+            return None
+
+        results = [value['name'] for value in values]
+
+        return '; '.join(results)
+
+
+    def get_value(self, key):
+        if key in self.record:
+            return self.record[key]
+
+        return None

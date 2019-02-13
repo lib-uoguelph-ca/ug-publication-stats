@@ -12,10 +12,20 @@ def get_dois():
     """
 
     # We're just stubbing this out for now, because WOS hasn't approved my developer application yet.
-    dois = ["10.1016/j.tourman.2018.10.025",
-            "10.1098/rspb.2002.2218",
-            "10.1038/nature11234",
-            "10.1021/cr00104a001",
-            "10.1111/j.1471-8286.2006.01678.x"]
+    dois = ["10.1016/j.foodchem.2018.12.028",
+            "10.1016/j.tourman.2018.10.025",
+            "10.1016/j.cej.2018.11.013",
+            "10.1016/j.foodqual.2018.10.010",
+            "10.1016/j.foodhyd.2018.09.003",
+            "10.1016/j.foodchem.2018.09.023",
+            "10.1016/j.foodchem.2018.09.010",
+            "10.1111/fwb.13220",
+            "10.1007/s11146-017-9623-2",
+            "10.1111/1744-7917.12488",
+            "10.1111/jac.12289",
+            "10.1016/j.aquaculture.2018.09.025",
+            "10.1016/j.biortech.2018.11.004]"]
+
+
 
     return dois
