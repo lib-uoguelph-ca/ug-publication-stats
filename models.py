@@ -8,8 +8,8 @@ class BaseModel(Model):
 
 
 class Author(BaseModel):
-    first_name = CharField()
-    last_name = CharField()
+    first_name = CharField(null=True)
+    last_name = CharField(null=True)
     orcid = CharField(null=True)
     affiliation = CharField(null=True)
 

@@ -12,6 +12,8 @@ class UnpaywallClient:
         self.endpoint = 'https://api.unpaywall.org/v2/'
 
     def lookup(self, doi):
+        self.logger.debug(f"Unpaywall: Fetching DOI: {doi}")
+
         try:
             request_url = self.endpoint + urllib.parse.quote(doi) + "?email=" + self.email
             response = urllib.request.urlopen(request_url)
@@ -118,6 +120,9 @@ class UnpaywallParser:
         return self.record['oa_locations']
 
     def get_authors(self):
+        if not self.record['z_authors']:
+            return []
+
         authors = [UnpaywallAuthor(author) for author in self.record['z_authors']]
         return authors
 

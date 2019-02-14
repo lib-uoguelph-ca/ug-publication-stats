@@ -26,6 +26,11 @@ def get_dois():
             "10.1016/j.aquaculture.2018.09.025",
             "10.1016/j.biortech.2018.11.004]"]
 
-
-
     return dois
+
+def get_dois_from_xlsx(file):
+    import pandas as pd
+
+    data = pd.read_excel(file)
+    data.dropna(subset=['DI'], inplace=True)
+    return data['DI']
