@@ -9,7 +9,7 @@ class BaseModel(Model):
 
 class Author(BaseModel):
     first_name = CharField(null=True)
-    last_name = CharField(null=True)
+    last_name = CharField()
     orcid = CharField(null=True)
     affiliation = CharField(null=True)
 

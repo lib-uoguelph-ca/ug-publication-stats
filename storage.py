@@ -1,100 +1,115 @@
 from models import *
+from peewee import IntegrityError
 
+class storage:
+    def __init__(self, logger):
+        self.logger = logger
 
-def init_db():
-    """
-    Initialize the database, creating the tables if not already present
+    def init_db(self):
+        """
+        Initialize the database, creating the tables if not already present
 
-    :return: A peewee database object
-    """
-    from peewee import SqliteDatabase
+        :return: A peewee database object
+        """
+        from peewee import SqliteDatabase
 
-    db = SqliteDatabase('ugps.db')
-    with db:
-        db.create_tables([Author, Publisher, Journal, Article, Authored, Location])
+        self.logger.debug('No database file found - Creating database')
 
-    return db
+        db = SqliteDatabase('ugps.db')
+        with db:
+            db.create_tables([Author, Publisher, Journal, Article, Authored, Location])
 
+        return db
 
-def clean_db():
-    """
-    Remove all rows from all tables.
-    """
-    Author.delete().execute()
-    Publisher.delete().execute()
-    Journal.delete().execute()
-    Authored.delete().execute()
-    Article.delete().execute()
+    def clean_db(self):
+        """
+        Remove all rows from all tables.
+        """
 
+        self.logger.debug('Cleaning database')
 
-def persist(record):
-    """
-    Save a record to the database.
-    :param record: A dictionary representing a record.
-    """
-    authors = create_authors(record)
-    article = create_article(record)
-    associate_authors(article, authors)
-    create_locations(record, article)
+        Author.delete().execute()
+        Publisher.delete().execute()
+        Journal.delete().execute()
+        Authored.delete().execute()
+        Article.delete().execute()
 
+    def persist(self, record):
+        """
+        Save a record to the database.
+        :param record: A dictionary representing a record.
+        """
 
-def create_authors(record):
-    authors = record.get_authors()
+        authors = self.create_authors(record)
+        article = self.create_article(record)
+        self.associate_authors(article, authors)
+        self.create_locations(record, article)
 
-    author_list = []
-    for author in authors:
-        result = Author.get_or_create(
-            first_name=author.get_first_name(),
-            last_name=author.get_last_name(),
-            orcid=author.get_orcid(),
-            affiliation=author.get_affiliations()
+    def create_authors(self, record):
+        authors = record.get_authors()
+
+        author_list = []
+        for author in authors:
+            try:
+                result = Author.get_or_create(
+                    first_name=author.get_first_name(),
+                    last_name=author.get_last_name(),
+                    orcid=author.get_orcid(),
+                    affiliation=author.get_affiliations()
+                )
+
+                author_list.append(result[0])
+            except IntegrityError:
+                self.logger.error(f'Author integrity constraint failed for DOI: {record.get_doi()}')
+                continue
+
+        return author_list
+
+    def create_publisher(self, record):
+        try:
+            result = result = Publisher.get_or_create(name=record.get_publisher())
+            return result[0]
+        except IntegrityError:
+            self.logger.error(f'Publisher integrity constraint failed for DOI: {record.get_doi()}')
+            return None
+
+    def create_journal(self, record):
+        try:
+            result = Journal.get_or_create(name=record.get_journal_title())
+            return result[0]
+        except IntegrityError:
+            self.logger.error(f'Journal integrity constraint failed for DOI: {record.get_doi()}')
+            return None
+
+    def create_article(self, record):
+        journal = self.create_journal(record)
+        publisher = self.create_publisher(record)
+
+        result = Article.get_or_create(
+            title=record.get_title(),
+            type=record.get_type(),
+            date=record.get_date(),
+            year=record.get_year(),
+            journal=journal,
+            publisher=publisher,
+            oa=record.is_oa(),
+            hybrid=record.is_hybrid(),
+            bronze=record.is_bronze(),
+            self_archived=record.get_self_archived(),
+            doi=record.get_doi(),
+            doi_url=record.get_doi_url()
         )
-        author_list.append(result[0])
 
-    return author_list
+        return result[0]
 
+    def associate_authors(self, article, authors):
+        for author in authors:
+            Authored.get_or_create(author=author, article=article)
 
-def create_publisher(record):
-    result = Publisher.get_or_create(name=record.get_publisher())
-    return result[0]
+    def create_locations(self, record, article):
+        locations = record.get_locations()
 
-
-def create_journal(record):
-    result = Journal.get_or_create(name=record.get_journal_title())
-    return result[0]
-
-
-def create_article(record):
-    journal = create_journal(record)
-    publisher = create_publisher(record)
-
-    result = Article.get_or_create(
-        title=record.get_title(),
-        type=record.get_type(),
-        date=record.get_date(),
-        year=record.get_year(),
-        journal=journal,
-        publisher=publisher,
-        oa=record.is_oa(),
-        hybrid=record.is_hybrid(),
-        bronze=record.is_bronze(),
-        self_archived=record.get_self_archived(),
-        doi=record.get_doi(),
-        doi_url=record.get_doi_url()
-    )
-
-    return result[0]
-
-
-def associate_authors(article, authors):
-    for author in authors:
-        Authored.get_or_create(author=author, article=article)
-
-
-def create_locations(record, article):
-    locations = record.get_locations()
-
-    # TODO: Locations should be implemented as some sort of value object,
-    #       to prevent the Unpaywall API implementation from leaking into this class.
-    for location in locations:
-        Location.get_or_create(article=article, url=location['url'])
+        # TODO: Locations should be implemented as some sort of value object,
+        #       to prevent the Unpaywall API implementation from leaking into this class.
+        for location in locations:
+            Location.get_or_create(article=article, url=location['url'])

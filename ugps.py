@@ -2,7 +2,7 @@ import argparse
 import logging
 from unpaywall import UnpaywallClient, UnpaywallParser
 from webofscience import get_dois_from_xlsx, get_dois
-from storage import persist, init_db, clean_db
+from storage import storage
 import secrets
 from report.reporting import Reporter
 from report.reports import *
@@ -12,9 +12,9 @@ handler = logging.FileHandler('ugps.log')
 handler.setFormatter(logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s', datefmt='%d-%m-%Y %H:%M:%S'))
 
 
-def fetch(logger, args):
-    init_db()
-    clean_db()
+def fetch(db, logger, args):
+    db.init_db()
+    db.clean_db()
 
     dois = []
     if args.in_file:
@@ -30,7 +30,7 @@ def fetch(logger, args):
             continue
 
         record = UnpaywallParser(result)
-        persist(record)
+        db.persist(record)
 
 
 def report(report, outfile):
@@ -63,6 +63,8 @@ logger = logging.getLogger('UGPS')
 handler = logging.FileHandler('ugps.log')
 handler.setLevel(logging.DEBUG)
 
+db = storage(logger)
+
 if args.v:
     logger.setLevel(logging.INFO)
 elif args.vv:
@@ -72,7 +74,7 @@ handler.setFormatter(logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(messag
 logger.addHandler(handler)
 
 if args.fetch:
-    fetch(logger, args)
+    fetch(db, logger, args)
 
 if args.report:
     report(args.report, args.output)
