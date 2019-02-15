@@ -50,6 +50,9 @@ class BaseRecord(ABC):
         def get_authors(self):
             return self.metadata['authors']
 
+        def get_citations(self):
+            return self.metadata['citations']
+
 
 class BaseAuthorRecord(ABC):
     metadata = {}

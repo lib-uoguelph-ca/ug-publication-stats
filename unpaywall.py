@@ -32,7 +32,7 @@ class UnpaywallClient:
             yield self.lookup(doi)
 
 
-class UnpaywallParser(BaseRecord):
+class UnpaywallRecord(BaseRecord):
 
     def __init__(self, record):
         self.hybrid = False
