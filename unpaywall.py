@@ -1,6 +1,7 @@
 import urllib.request, urllib.parse
 from urllib.error import URLError
 import json
+from storage.record import BaseRecord
 
 
 class UnpaywallClient:
@@ -31,17 +32,36 @@ class UnpaywallClient:
             yield self.lookup(doi)
 
 
-class UnpaywallParser:
+class UnpaywallParser(BaseRecord):
 
     def __init__(self, record):
-        self.record = record
         self.hybrid = False
         self.bronze = False
         self.green = 0
 
-        self.preprocess()
+        self.preprocess(record)
 
-    def preprocess(self):
+    def preprocess(self, record):
+
+        self.metadata['title'] = record['title']
+        self.metadata['date'] = record['published_date']
+        self.metadata['year'] = record['year']
+        self.metadata['journal'] = record['journal_name']
+        self.metadata['type'] = record['genre']
+        self.metadata['publisher'] = record['publisher']
+        self.metadata['is_oa'] = record['is_oa']
+        self.metadata['doi'] = record['doi']
+        self.metadata['doi_url'] = record['doi_url']
+        self.metadata['locations'] = record['oa_locations']
+        self.metadata['authors'] = self._get_authors(record)
+
+        self._set_flags(record)
+
+        self.metadata['hybrid'] = self.hybrid
+        self.metadata['bronze'] = self.bronze
+        self.metadata['self_archived'] = self.green
+
+    def _set_flags(self, record):
         """
         Scan through the record and:
         - Set various flags relating to the style of OA.
@@ -56,7 +76,7 @@ class UnpaywallParser:
 
         # If the record is in DOAJ or flagged as OA it's gold
         gold = False
-        if self.record['journal_is_in_doaj'] or self.record['journal_is_oa']:
+        if record['journal_is_in_doaj'] or record['journal_is_oa']:
             gold = True
 
         for loc in locations:
@@ -76,53 +96,11 @@ class UnpaywallParser:
                 else:
                     self.bronze = True
 
-    def get_title(self):
-        return self.record['title']
-
-    def get_date(self):
-        return self.record['published_date']
-
-    def get_year(self):
-        return self.record['year']
-
-    def get_journal_title(self):
-        return self.record['journal_name']
-
-    def get_type(self):
-        return self.record['genre']
-
-    def get_publisher(self):
-        return self.record['publisher']
-
-    def is_oa(self):
-        return self.record['is_oa']
-
-    def is_hybrid(self):
-        # self.hybrid is set during preprocess()
-        return self.hybrid
-
-    def is_bronze(self):
-        # self.bronze is set during preprocess()
-        return self.bronze
-
-    def get_self_archived(self):
-        # self.green is set during preprocess()
-        return self.green
-
-    def get_doi(self):
-        return self.record['doi']
-
-    def get_doi_url(self):
-        return self.record['doi_url']
-
-    def get_locations(self):
-        return self.record['oa_locations']
-
-    def get_authors(self):
-        if not self.record['z_authors']:
+    def _get_authors(self, record):
+        if not record['z_authors']:
             return []
 
-        authors = [UnpaywallAuthor(author) for author in self.record['z_authors']]
+        authors = [UnpaywallAuthor(author) for author in record['z_authors']]
         return authors
 
 
