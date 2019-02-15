@@ -1,7 +1,8 @@
 from models import *
 from peewee import IntegrityError
 
-class storage:
+
+class DB:
     def __init__(self, logger):
         self.logger = logger
 

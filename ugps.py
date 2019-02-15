@@ -2,7 +2,7 @@ import argparse
 import logging
 from unpaywall import UnpaywallClient, UnpaywallParser
 from webofscience import get_dois_from_xlsx, get_dois
-from storage import storage
+from storage.persistence import DB
 import secrets
 from report.reporting import Reporter
 from report.reports import *
@@ -13,6 +13,8 @@ handler.setFormatter(logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(messag
 
 
 def fetch(db, logger, args):
+
+    # TODO: Implement threading
     db.init_db()
     db.clean_db()
 
@@ -63,7 +65,7 @@ logger = logging.getLogger('UGPS')
 handler = logging.FileHandler('ugps.log')
 handler.setLevel(logging.DEBUG)
 
-db = storage(logger)
+db = DB(logger)
 
 if args.v:
     logger.setLevel(logging.INFO)

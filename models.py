@@ -35,6 +35,7 @@ class Article(BaseModel):
     self_archived = SmallIntegerField(null=True)
     doi = CharField(null=True)
     doi_url = CharField(null=True)
+    citations = IntegerField(null=True, default=0)
 
 class Authored(BaseModel):
     author = ForeignKeyField(Author, backref='articles')

@@ -1,7 +1,6 @@
 import urllib.request, urllib.parse
 from urllib.error import URLError
 import json
-import datetime
 
 
 class UnpaywallClient:
