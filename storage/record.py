@@ -49,3 +49,20 @@ class BaseRecord(ABC):
 
         def get_authors(self):
             return self.metadata['authors']
+
+
+class BaseAuthorRecord(ABC):
+    metadata = {}
+
+    def get_first_name(self):
+        return self.metadata['first_name']
+
+    def get_last_name(self):
+        return self.metadata['last_name']
+
+    def get_orcid(self):
+        return self.metadata['orcid']
+
+    def get_affiliations(self):
+        return self.metadata['affiliations']
+

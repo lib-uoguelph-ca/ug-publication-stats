@@ -1,7 +1,7 @@
 import urllib.request, urllib.parse
 from urllib.error import URLError
 import json
-from storage.record import BaseRecord
+from storage.record import BaseRecord, BaseAuthorRecord
 
 
 class UnpaywallClient:
@@ -104,21 +104,16 @@ class UnpaywallParser(BaseRecord):
         return authors
 
 
-class UnpaywallAuthor:
+class UnpaywallAuthor(BaseAuthorRecord):
     def __init__(self, author):
         self.record = author
+        self.metadata['first_name'] = self._get_value(author, 'given')
+        self.metadata['last_name'] = self._get_value(author, 'family')
+        self.metadata['orcid'] = self._get_value(author, 'ORCID')
+        self.metadata['affiliations'] = self._get_affiliations(author)
 
-    def get_first_name(self):
-        return self.get_value('given')
-
-    def get_last_name(self):
-        return self.get_value('family')
-
-    def get_orcid(self):
-        return self.get_value('ORCID')
-
-    def get_affiliations(self):
-        values = self.get_value('affiliation')
+    def _get_affiliations(self, author):
+        values = self._get_value(author, 'affiliation')
 
         if not values:
             return None
@@ -128,8 +123,8 @@ class UnpaywallAuthor:
         return '; '.join(results)
 
 
-    def get_value(self, key):
-        if key in self.record:
-            return self.record[key]
+    def _get_value(self, record, key):
+        if key in record:
+            return record[key]
 
         return None
