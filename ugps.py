@@ -6,6 +6,7 @@ from storage.persistence import DB
 import secrets
 from report.reporting import Reporter
 from report.reports import *
+from habanero import counts
 
 logger = logging.getLogger('UGPS')
 handler = logging.FileHandler('ugps.log')
@@ -32,6 +33,8 @@ def fetch(db, logger, args):
             continue
 
         record = UnpaywallArticleRecord(result)
+        citations = counts.citation_count(record.get_doi())
+        record.set_metadata('citations', citations)
         db.persist(record)
 
 

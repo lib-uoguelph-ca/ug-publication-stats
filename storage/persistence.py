@@ -98,7 +98,8 @@ class DB:
             bronze=record.is_bronze(),
             self_archived=record.get_self_archived(),
             doi=record.get_doi(),
-            doi_url=record.get_doi_url()
+            doi_url=record.get_doi_url(),
+            citations=record.get_citations()
         )
 
         return result[0]
