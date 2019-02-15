@@ -1,6 +1,6 @@
 import argparse
 import logging
-from unpaywall import UnpaywallClient, UnpaywallRecord
+from unpaywall import UnpaywallClient, UnpaywallArticleRecord
 from webofscience import get_dois_from_xlsx, get_dois
 from storage.persistence import DB
 import secrets
@@ -31,7 +31,7 @@ def fetch(db, logger, args):
         if not result:
             continue
 
-        record = UnpaywallRecord(result)
+        record = UnpaywallArticleRecord(result)
         db.persist(record)
 
 

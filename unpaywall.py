@@ -1,7 +1,7 @@
 import urllib.request, urllib.parse
 from urllib.error import URLError
 import json
-from storage.record import BaseRecord, BaseAuthorRecord
+from storage.record import BaseArticleRecord, BaseAuthorRecord
 
 
 class UnpaywallClient:
@@ -32,7 +32,7 @@ class UnpaywallClient:
             yield self.lookup(doi)
 
 
-class UnpaywallRecord(BaseRecord):
+class UnpaywallArticleRecord(BaseArticleRecord):
 
     def __init__(self, record):
         self.hybrid = False
@@ -49,7 +49,7 @@ class UnpaywallRecord(BaseRecord):
         self.metadata['journal'] = record['journal_name']
         self.metadata['type'] = record['genre']
         self.metadata['publisher'] = record['publisher']
-        self.metadata['is_oa'] = record['is_oa']
+        self.metadata['oa'] = record['is_oa']
         self.metadata['doi'] = record['doi']
         self.metadata['doi_url'] = record['doi_url']
         self.metadata['locations'] = record['oa_locations']
@@ -107,13 +107,13 @@ class UnpaywallRecord(BaseRecord):
 class UnpaywallAuthor(BaseAuthorRecord):
     def __init__(self, author):
         self.record = author
-        self.metadata['first_name'] = self._get_value(author, 'given')
-        self.metadata['last_name'] = self._get_value(author, 'family')
-        self.metadata['orcid'] = self._get_value(author, 'ORCID')
+        self.metadata['first_name'] = self._get_optional_value(author, 'given')
+        self.metadata['last_name'] = self._get_optional_value(author, 'family')
+        self.metadata['orcid'] = self._get_optional_value(author, 'ORCID')
         self.metadata['affiliations'] = self._get_affiliations(author)
 
     def _get_affiliations(self, author):
-        values = self._get_value(author, 'affiliation')
+        values = self._get_optional_value(author, 'affiliation')
 
         if not values:
             return None
@@ -122,8 +122,7 @@ class UnpaywallAuthor(BaseAuthorRecord):
 
         return '; '.join(results)
 
-
-    def _get_value(self, record, key):
+    def _get_optional_value(self, record, key):
         if key in record:
             return record[key]
 
