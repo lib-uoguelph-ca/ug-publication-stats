@@ -1,6 +1,7 @@
 from peewee import *
 
-db = SqliteDatabase('ugps.db')
+db_file_name = 'ugps.db'
+db = SqliteDatabase(db_file_name)
 
 class BaseModel(Model):
     class Meta:

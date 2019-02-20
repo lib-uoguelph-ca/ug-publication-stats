@@ -38,7 +38,7 @@ def fetch(db, logger, args):
         db.persist(record)
 
 
-def report(report, outfile):
+def report(report, outfile=None):
     reporter = Reporter(outfile)
     reporter.register_all()
 
@@ -61,7 +61,7 @@ cli.add_argument('-v', action='store_true')
 cli.add_argument('-vv', action='store_true')
 
 cli.add_argument('--report', action='store', help='Run reports', nargs='?', const="list", default=False)
-cli.add_argument('--output', '-o', action='store', default="output/out.csv")
+cli.add_argument('--output', '-o', action='store', default=None)
 args = cli.parse_args()
 
 logger = logging.getLogger('UGPS')

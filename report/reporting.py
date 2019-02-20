@@ -22,9 +22,10 @@ class Reporter:
         """
         Run all currently registered reports.
         """
+        self.outfile = None
         for name, cls in self.reports.items():
             report = cls()
-            report.run(self.outfile)
+            report.run()
 
     def report(self, report):
         """
@@ -71,7 +72,7 @@ class Report(ABC):
         return f"{cls.name}: {cls.description}"
 
     @abstractmethod
-    def run(self, outfile):
+    def run(self, outfile = None):
         pass
 
     def get_values(self, record):
@@ -89,4 +90,9 @@ class Report(ABC):
             return ''
         else:
             return ''
+
+    def _make_file_name(self):
+        import re
+        file_name = re.sub('[^\w\d-]', '-', self.name)
+        return file_name
 

@@ -4,9 +4,6 @@ from csv import DictWriter
 
 
 class BasicReport(Report):
-    """
-    A basic stub report for testing.
-    """
 
     name = "Basic OA Summary"
     description = "OA Articles flagged by OA status (Bronze, Hybrid, Green)."
@@ -24,9 +21,13 @@ class BasicReport(Report):
         'doi_url': 'doi_url'
     }
 
-    def run(self, outfile):
+    def run(self, outfile=None):
 
-        print("Running basic report")
+        print(f"Running {self.name}")
+
+        if not outfile:
+            file_name = self._make_file_name()
+            outfile = f'./output/{file_name}.csv'
 
         with open(outfile, 'w', newline='') as csvfile:
             writer = DictWriter(csvfile, fieldnames=self.mapping.keys())
