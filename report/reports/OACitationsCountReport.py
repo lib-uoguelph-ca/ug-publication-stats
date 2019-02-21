@@ -1,6 +1,5 @@
 from report.reporting import Report
 from models import Article, db_file_name
-from csv import DictWriter
 
 import sqlite3
 import pandas as pd
