@@ -13,6 +13,9 @@ class Author(BaseModel):
     last_name = CharField()
     orcid = CharField(null=True)
     affiliation = CharField(null=True)
+    ug = BooleanField(default = False)
+    college = CharField(null=True)
+    department = CharField(null=True)
 
 
 class Publisher(BaseModel):
