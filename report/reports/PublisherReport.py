@@ -19,11 +19,11 @@ class PublisherReport(Report):
     }
 
     def __init__(self):
-        conn = sqlite3.connect(db_file_name)
-        conn.row_factory = sqlite3.Row
+        self.conn = sqlite3.connect(db_file_name)
+        self.conn.row_factory = sqlite3.Row
+        self.cursor = self.conn.cursor()
 
-        self.conn = conn
-        self.cursor = conn.cursor()
+        self.mapping['estimated apc cost'] = self.estimate_cost
 
     def __del__(self):
         self.conn.close()
@@ -36,7 +36,8 @@ class PublisherReport(Report):
                 sum(a.oa) as oa_count, 
                 sum(a.hybrid) as hybrid_count, 
                 sum(a.bronze) as bronze_count, 
-                sum(a.self_archived) as green_count 
+                sum(a.self_archived) as green_count,
+                p.average_apc as average_apc
             FROM article a 
             LEFT JOIN publisher p on a.publisher_id = p.id
             GROUP BY a.publisher_id
@@ -60,3 +61,12 @@ class PublisherReport(Report):
 
             for result in results:
                 writer.writerow(self.get_values(result))
+
+    def estimate_cost(self, record):
+
+        if record['average_apc']:
+            record_count = record['oa_count'] + record['hybrid_count']
+            estimated_cost = record_count * record['average_apc']
+            return estimated_cost
+
+        return None
