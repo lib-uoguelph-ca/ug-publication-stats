@@ -1,7 +1,7 @@
-import urllib.request, urllib.parse
-from urllib.error import URLError
-import json
 from storage.record import BaseArticleRecord, BaseAuthorRecord
+
+import urllib.parse
+import requests
 
 
 class UnpaywallClient:
@@ -16,16 +16,17 @@ class UnpaywallClient:
 
         try:
             request_url = self.endpoint + urllib.parse.quote(doi) + "?email=" + self.email
-            response = urllib.request.urlopen(request_url)
+            response = requests.get(request_url)
+            response.raise_for_status()  # Throw exceptions for bad requests
 
-        except URLError as error:
+        except requests.exceptions.HTTPError as error:
             if self.logger:
                 self.logger.error(f"Unpaywall request error for doi: {doi} - {error}")
 
             return None
 
-        data = response.read()
-        return json.loads(data)
+        data = response.json()
+        return data
 
     def fetchall(self, dois):
         for doi in dois:
