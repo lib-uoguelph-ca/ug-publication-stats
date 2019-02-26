@@ -1,11 +1,13 @@
-import argparse
-import logging
-from unpaywall import UnpaywallClient, UnpaywallArticleRecord
-from webofscience import get_dois_from_xlsx, get_dois
-from storage.persistence import DB
 import secrets
+from storage.persistence import DB
 from report.reporting import Reporter
 from report.reports import *
+from unpaywall import UnpaywallClient, UnpaywallArticleRecord
+from webofscience import get_dois_from_xlsx, get_dois
+import openapc
+
+import argparse
+import logging
 from habanero import counts
 
 logger = logging.getLogger('UGPS')
@@ -36,6 +38,10 @@ def fetch(db, logger, args):
         citations = counts.citation_count(record.get_doi())
         record.set_metadata('citations', citations)
         db.persist(record)
+
+    oapc = openapc.OpenAPC()
+    oapc.fetch_data()
+
 
 
 def report(report, outfile=None):
