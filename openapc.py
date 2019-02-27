@@ -13,7 +13,6 @@ class OpenAPC:
         uri = "https://olap.intact-project.org/cube/combined/aggregate?drilldown=publisher&cut=&order=apc_amount_avg%3Adesc"
         r = requests.get(uri)
 
-        print(r.status_code)
         data = r.json()
 
         for row in data['cells']:
