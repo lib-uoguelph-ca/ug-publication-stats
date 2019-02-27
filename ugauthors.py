@@ -2,7 +2,14 @@ import logging
 from models import Author
 
 class UgAuthorUpdater:
+    """
+    Tries to match authors against LDAP entries.
+    If a match is found, flag the author as a ug author and pull in some additional data like department and college.
+    """
 
+    # The LDAP directory doesn't contain colleges - only departments.
+    # But for most academic units we can look up the college from the department name.
+    # This dict provides that department - college mapping.
     dept_college = {
         'History': 'College of Arts',
         'Department of Philosophy': 'College of Arts',
@@ -47,9 +54,14 @@ class UgAuthorUpdater:
         self.logger = logging.getLogger('UGPS')
 
     def update_authors(self):
+        """
+        Loop through all authors and augment their records using information from the LDAP directory.
+        :return:
+        """
         authors = Author.select()
 
         for author in authors:
+            self.logger.debug(f"Update Author: {author.first_name} {author.last_name}")
             if not author.first_name or not author.last_name:
                 continue
 
@@ -60,10 +72,10 @@ class UgAuthorUpdater:
                 if dept in self.dept_college:
                     college = self.dept_college[dept]
                 else:
-                    self.logger.debug(f"Couldn't find college for department: {dept}")
+                    self.logger.warn(f"Couldn't find college for department: {dept}")
 
                 self.logger.debug(f"Found department for author: {author.first_name} {author.last_name}")
-                author.ug = True
+                author.local = True
                 author.department = dept
                 author.college = college
                 author.save()
