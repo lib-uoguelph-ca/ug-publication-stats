@@ -6,18 +6,13 @@ import sqlite3
 
 
 
-class AuthorReport(Report):
+class CollegeReport(Report):
 
-    name = "Author Report"
-    description = "OA counts by author"
+    name = "College Report"
+    description = "OA counts by college"
 
     mapping = {
-        'first name': lambda record: record['first_name'],
-        'last name': lambda record: record['last_name'],
-        'local': lambda record: record['local'],
-        'affiliation': lambda record: record['affiliation'],
         'college': lambda record: record['college'],
-        'department': lambda record: record['department'],
         'oa count': lambda record: record['oa_count'],
         'hybrid count': lambda record: record['hybrid_count'],
         'bronze count': lambda record: record['bronze_count'],
@@ -49,7 +44,7 @@ class AuthorReport(Report):
 
             results = self.cursor.execute(
                 """
-                SELECT u.*,
+                SELECT u.college as college,
                 sum(a.oa) as oa_count, 
                 sum(a.hybrid) as hybrid_count, 
                 sum(a.bronze) as bronze_count, 
@@ -57,10 +52,9 @@ class AuthorReport(Report):
                 FROM article a
                 LEFT JOIN authored w on a.id = w.article_id
                 LEFT JOIN author u on w.author_id = u.id
-                GROUP BY u.id
+                GROUP BY u.college
                 """
             ).fetchall()
 
             for result in results:
-                print(result)
                 writer.writerow(self.get_values(result))
