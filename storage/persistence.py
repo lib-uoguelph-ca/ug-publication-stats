@@ -86,23 +86,29 @@ class DB:
         journal = self.create_journal(record)
         publisher = self.create_publisher(record)
 
-        result = Article.get_or_create(
-            title=record.get_title(),
-            type=record.get_type(),
-            date=record.get_date(),
-            year=record.get_year(),
-            journal=journal,
-            publisher=publisher,
-            oa=record.is_oa(),
-            hybrid=record.is_hybrid(),
-            bronze=record.is_bronze(),
-            self_archived=record.get_self_archived(),
-            doi=record.get_doi(),
-            doi_url=record.get_doi_url(),
-            citations=record.get_citations()
-        )
+        try:
+            result = Article.get_or_create(
+                title=record.get_title(),
+                type=record.get_type(),
+                date=record.get_date(),
+                year=record.get_year(),
+                journal=journal,
+                publisher=publisher,
+                oa=record.is_oa(),
+                hybrid=record.is_hybrid(),
+                bronze=record.is_bronze(),
+                self_archived=record.get_self_archived(),
+                doi=record.get_doi(),
+                doi_url=record.get_doi_url(),
+                citations=record.get_citations()
+            )
 
-        return result[0]
+            return result[0]
+
+        except IntegrityError:
+            self.logger.error(f'Journal integrity constraint failed for DOI: {record.get_doi()}')
+            return None
+
 
     def associate_authors(self, article, authors):
         for author in authors:
