@@ -5,14 +5,13 @@ from report.reports import *
 from unpaywall import UnpaywallClient, UnpaywallArticleRecord
 from webofscience import get_dois_from_xlsx, get_dois
 import openapc
+from ldap import LDAPClient
+from ugauthors import UgAuthorUpdater
 
 import argparse
 import logging
 from habanero import counts
 
-logger = logging.getLogger('UGPS')
-handler = logging.FileHandler('ugps.log')
-handler.setFormatter(logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s', datefmt='%d-%m-%Y %H:%M:%S'))
 
 
 def fetch(db, logger, args):
@@ -42,6 +41,9 @@ def fetch(db, logger, args):
     oapc = openapc.OpenAPC()
     oapc.fetch_data()
 
+    ldap_client = LDAPClient(secrets.LDAP_ENDPOINT, secrets.LDAP_PORT, secrets.LDAP_BASEDN, secrets.LDAP_USER, secrets.LDAP_PASS)
+    ug_author_updater = UgAuthorUpdater(ldap_client)
+    ug_author_updater.update_authors()
 
 
 def report(report, outfile=None):
@@ -72,6 +74,7 @@ args = cli.parse_args()
 
 logger = logging.getLogger('UGPS')
 handler = logging.FileHandler('ugps.log')
+handler.setFormatter(logging.Formatter(fmt='%(asctime)s %(levelname)-8s %(message)s', datefmt='%d-%m-%Y %H:%M:%S'))
 handler.setLevel(logging.DEBUG)
 
 db = DB(logger)
