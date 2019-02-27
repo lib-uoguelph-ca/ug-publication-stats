@@ -1,6 +1,7 @@
 
 
 from ldap3 import Server, Connection
+from ldap3.core.exceptions import LDAPInvalidFilterError
 import logging
 
 class LDAPClient:
@@ -15,17 +16,21 @@ class LDAPClient:
 
         self.conn.bind()
         self.basedn = basedn
+        self.logger = logging.getLogger('UGPS')
 
     def __del__(self):
         self.conn.unbind()
 
     def get_department(self, first_name, last_name):
         filter = f"(cn={first_name} {last_name})"
-        self.conn.search(search_base=self.basedn, search_filter=filter, attributes=['ou'])
+        try:
+            self.conn.search(search_base=self.basedn, search_filter=filter, attributes=['ou'])
 
-        if len(self.conn.response) == 1:
-            entry = self.conn.entries[0]
-            return str(entry['ou'])
+            if len(self.conn.response) == 1:
+                entry = self.conn.entries[0]
+                return str(entry['ou'])
+        except LDAPInvalidFilterError:
+            self.logger.warning(f"LDAP get department - Invalid filter: {filter}")
 
         return None
 
