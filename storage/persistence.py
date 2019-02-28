@@ -112,7 +112,10 @@ class DB:
 
     def associate_authors(self, article, authors):
         for author in authors:
-            Authored.get_or_create(author=author, article=article)
+            try:
+                Authored.get_or_create(author=author, article=article)
+            except IntegrityError:
+                self.logger.error(f'Author-Article integrity constraint failed for Article: {article.id}, Author: {author.id}')
 
     def create_locations(self, record, article):
         locations = record.get_locations()
@@ -120,4 +123,7 @@ class DB:
         # TODO: Locations should be implemented as some sort of value object,
         #       to prevent the Unpaywall API implementation from leaking into this class.
         for location in locations:
-            Location.get_or_create(article=article, url=location['url'])
+            try:
+                Location.get_or_create(article=article, url=location['url'])
+            except IntegrityError:
+                self.logger.error(f'Location integrity constraint failed for Article: {article.id}, Location: {location["url"]}')
