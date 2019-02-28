@@ -1,5 +1,5 @@
 
-
+import re
 from ldap3 import Server, Connection
 from ldap3.core.exceptions import LDAPInvalidFilterError
 import logging
@@ -22,6 +22,7 @@ class LDAPClient:
         self.conn.unbind()
 
     def get_department(self, first_name, last_name):
+        first_name = re.sub("\W[A-Z]\.", "", first_name)
         filter = f"(cn={first_name} {last_name})"
         try:
             self.conn.search(search_base=self.basedn, search_filter=filter, attributes=['ou'])
