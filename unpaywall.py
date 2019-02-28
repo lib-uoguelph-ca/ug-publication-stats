@@ -12,6 +12,11 @@ class UnpaywallClient:
         self.endpoint = 'https://api.unpaywall.org/v2/'
 
     def lookup(self, doi):
+        """
+        Fetch info on a single DOI fromt the API.
+        :param doi: The doi to query
+        :return: JSON response data or None
+        """
         self.logger.debug(f"Unpaywall: Fetching DOI: {doi}")
 
         try:

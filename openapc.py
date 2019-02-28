@@ -5,6 +5,9 @@ from models import Publisher
 
 
 class OpenAPC:
+    """
+    Fetch and save data from OpenAPC on average APC costs for each publisher.
+    """
 
     def __init__(self):
         self.logger = logging.getLogger('UGPS')
