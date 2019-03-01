@@ -3,6 +3,7 @@ from peewee import *
 db_file_name = 'ugps.db'
 db = SqliteDatabase(db_file_name)
 
+
 class BaseModel(Model):
     class Meta:
         database = db
@@ -13,7 +14,7 @@ class Author(BaseModel):
     last_name = CharField()
     orcid = CharField(null=True)
     affiliation = CharField(null=True)
-    local = BooleanField(default = False)
+    local = BooleanField(default=False)
     college = CharField(null=True)
     department = CharField(null=True)
 
@@ -42,9 +43,11 @@ class Article(BaseModel):
     doi_url = CharField(null=True)
     citations = IntegerField(null=True, default=0)
 
+
 class Authored(BaseModel):
     author = ForeignKeyField(Author, backref='articles')
     article = ForeignKeyField(Article, backref='authors')
+
 
 class Location(BaseModel):
     article = ForeignKeyField(Article, backref='article')

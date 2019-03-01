@@ -5,7 +5,6 @@ from csv import DictWriter
 import sqlite3
 
 
-
 class AuthorReport(Report):
 
     name = "Author Report"

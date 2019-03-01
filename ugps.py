@@ -27,8 +27,7 @@ def fetch(db, logger, args):
     else:
         dois = get_dois()
 
-
-    results = [] # Threaded clients will append results to this list.
+    results = []  # Threaded clients will append results to this list.
     uc = ThreadedUnpaywallClient(results, args.email, logger=logger)
     queue = uc.get_queue()
 
@@ -55,7 +54,13 @@ def fetch(db, logger, args):
     oapc.fetch_data()
 
     # Identify local authors by searching for matches in the LDAP directory
-    ldap_client = LDAPClient(secrets.LDAP_ENDPOINT, secrets.LDAP_PORT, secrets.LDAP_BASEDN, secrets.LDAP_USER, secrets.LDAP_PASS)
+    ldap_client = LDAPClient(
+        secrets.LDAP_ENDPOINT,
+        secrets.LDAP_PORT,
+        secrets.LDAP_BASEDN,
+        secrets.LDAP_USER,
+        secrets.LDAP_PASS
+    )
     ug_author_updater = UgAuthorUpdater(ldap_client)
     ug_author_updater.update_authors()
 
@@ -80,6 +85,7 @@ def report(report, outfile=None):
         reporter.all()
     else:
         reporter.report(report)
+
 
 # Set up command line arguments.
 cli = argparse.ArgumentParser(description='Fetch UG OA data and run reports.')

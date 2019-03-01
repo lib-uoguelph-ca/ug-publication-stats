@@ -5,7 +5,6 @@ from csv import DictWriter
 import sqlite3
 
 
-
 class CollegeReport(Report):
 
     name = "College Report"
@@ -38,7 +37,6 @@ class CollegeReport(Report):
             outfile = f'./output/{file_name}.csv'
         else:
             outfile = f'{outfile}/{file_name}.csv'
-
 
         with open(outfile, 'w', newline='') as csvfile:
             writer = DictWriter(csvfile, fieldnames=self.mapping.keys())

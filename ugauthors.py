@@ -72,7 +72,7 @@ class UgAuthorUpdater:
                 if dept in self.dept_college:
                     college = self.dept_college[dept]
                 else:
-                    self.logger.warn(f"Couldn't find college for department: {dept}")
+                    self.logger.warning(f"Couldn't find college for department: {dept}")
 
                 self.logger.debug(f"Found department for author: {author.first_name} {author.last_name}")
                 author.local = True

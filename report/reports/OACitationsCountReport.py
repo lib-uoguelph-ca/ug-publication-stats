@@ -4,11 +4,11 @@ from models import Article, db_file_name
 import sqlite3
 import pandas as pd
 
+
 class OACitationsCountReport(Report):
 
     name = "OA Citation Count"
     description = "Count articles by OA status and citations"
-
 
     def run(self, outfile=None):
         print(f"Running {self.name}")
@@ -41,25 +41,26 @@ class OACitationsCountReport(Report):
         conn = sqlite3.connect(db_file_name)
         c = conn.cursor()
 
-        results = pd.DataFrame(index=[
-            "Just Gold",
-            "Just Hybrid",
-            "Just Bronze",
-            "Just Green",
-            "Gold + Green",
-            "Hybrid + Green",
-            "Bronze + Green",
-            "More Than One Green",
-            "All Green",
-            "All Open",
-            "All Closed",
-            "Total"
-        ],
-        columns=[
-            "Articles",
-            "Citations",
-            "Average Citations Per Article"
-        ])
+        results = pd.DataFrame(
+            index=[
+                "Just Gold",
+                "Just Hybrid",
+                "Just Bronze",
+                "Just Green",
+                "Gold + Green",
+                "Hybrid + Green",
+                "Bronze + Green",
+                "More Than One Green",
+                "All Green",
+                "All Open",
+                "All Closed",
+                "Total"
+            ],
+            columns=[
+                "Articles",
+                "Citations",
+                "Average Citations Per Article"
+            ])
 
         num_articles = Article.select().where(Article.year == year).count()
 

@@ -178,8 +178,9 @@ class UnpaywallThread(threading.Thread):
         self.logger.debug(f"Thread {self.id}: Query {item}")
         return self.client.lookup(item)
 
+
 class ThreadedUnpaywallClient:
-    def __init__(self, results, email, num_threads=3,thread_class=UnpaywallThread, logger=None):
+    def __init__(self, results, email, num_threads=3, thread_class=UnpaywallThread, logger=None):
         self.queue = queue.Queue()
         self.num_threads = num_threads
         self.threads = []
@@ -188,7 +189,6 @@ class ThreadedUnpaywallClient:
         self.results = results
         self.email = email
         self._init_threads()
-
 
     def get_queue(self):
         return self.queue
@@ -200,7 +200,7 @@ class ThreadedUnpaywallClient:
             thread.start()
 
     def stop(self):
-        self.queue.join() # Blocks until all unfinished items have been processed.
+        self.queue.join()  # Blocks until all unfinished items have been processed.
         self._cleanup()
 
     def _cleanup(self):

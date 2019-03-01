@@ -5,6 +5,7 @@ import secrets
 # with WosClient(secrets.WOS_USER, secrets.WOS_PASS) as client:
 #     print(wos.utils.query(client, 'OG="University of Guelph"'))
 
+
 def get_dois():
     """
     Get a list of UG DOIs from the Web of Science API.
@@ -27,6 +28,7 @@ def get_dois():
             "10.1016/j.biortech.2018.11.004]"]
 
     return dois
+
 
 def get_dois_from_xlsx(file):
     import pandas as pd

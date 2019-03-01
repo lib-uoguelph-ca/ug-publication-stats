@@ -1,8 +1,8 @@
-
 import re
 from ldap3 import Server, Connection
 from ldap3.core.exceptions import LDAPInvalidFilterError
 import logging
+
 
 class LDAPClient:
 

@@ -110,7 +110,6 @@ class DB:
             self.logger.error(f'Journal integrity constraint failed for DOI: {record.get_doi()}')
             return None
 
-
     def associate_authors(self, article, authors):
         for author in authors:
             try:
