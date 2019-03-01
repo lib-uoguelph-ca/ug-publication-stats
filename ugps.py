@@ -90,15 +90,15 @@ def report(report, outfile=None):
 # Set up command line arguments.
 cli = argparse.ArgumentParser(description='Fetch UG OA data and run reports.')
 cli.add_argument('--fetch', action='store_true', help='Fetch data from data sources.')
-cli.add_argument('--email', '-e', action='store', default=secrets.UNPAYWALL_EMAIL)
-cli.add_argument('--wosuser', action='store', default=secrets.WOS_USER)
-cli.add_argument('--wospass', action='store', default=secrets.WOS_PASS)
-cli.add_argument('--in_file', '-i', action='store')
+cli.add_argument('--email', '-e', action='store', default=secrets.UNPAYWALL_EMAIL, help='Email used to communicate with the Unpaywall API.')
+cli.add_argument('--wosuser', action='store', default=secrets.WOS_USER, help='Web of Science user ID')
+cli.add_argument('--wospass', action='store', default=secrets.WOS_PASS, help='Web of Science password')
+cli.add_argument('--in_file', '-i', action='store', help='Input file (exported from web of science search)')
 cli.add_argument('-v', action='store_true')
 cli.add_argument('-vv', action='store_true')
 
-cli.add_argument('--report', action='store', help='Run reports', nargs='?', const="list", default=False)
-cli.add_argument('--output', '-o', action='store', default=None)
+cli.add_argument('--report', action='store', help='Name of report to run.', nargs='?', const="list", default=False)
+cli.add_argument('--output', '-o', action='store', default=None, help='Directory in which to write reports.')
 args = cli.parse_args()
 
 # Set up our logging
