@@ -22,10 +22,9 @@ class Reporter:
         """
         Run all currently registered reports.
         """
-        self.outfile = None
         for name, cls in self.reports.items():
             report = cls()
-            report.run()
+            report.run(self.outfile)
 
     def report(self, report):
         """

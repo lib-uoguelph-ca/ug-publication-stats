@@ -63,7 +63,7 @@ def fetch(db, logger, args):
 def report(report, outfile=None):
     """
     Generate reports
-    :param report:
+    :param report: The name of the report to generate.
     :param outfile:
     :return:
     """

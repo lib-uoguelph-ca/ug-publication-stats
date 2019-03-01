@@ -20,11 +20,11 @@ class OACitationsCountReport(Report):
 
         for year in years:
 
+            file_name = self._make_file_name()
             if not outfile:
-                file_name = self._make_file_name()
                 file_name = f'./output/{file_name}-{year}.csv'
             else:
-                file_name = f"{outfile}-{year}.csv"
+                file_name = f"{outfile}/{file_name}-{year}.csv"
 
             self._do_year(year, file_name)
 
@@ -260,6 +260,12 @@ class OACitationsCountReport(Report):
         results.to_csv(outfile)
 
     def _all_years(self, outfile):
+
+        file_name = self._make_file_name()
+        if not outfile:
+            outfile = f'./output/{file_name}.csv'
+        else:
+            outfile = f'{outfile}/{file_name}.csv'
 
         conn = sqlite3.connect(db_file_name)
         c = conn.cursor()

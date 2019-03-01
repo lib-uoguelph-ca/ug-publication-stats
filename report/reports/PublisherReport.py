@@ -49,9 +49,11 @@ class PublisherReport(Report):
 
         print(f"Running {self.name}")
 
+        file_name = self._make_file_name()
         if not outfile:
-            file_name = self._make_file_name()
             outfile = f'./output/{file_name}.csv'
+        else:
+            outfile = f'{outfile}/{file_name}.csv'
 
         with open(outfile, 'w', newline='') as csvfile:
             writer = DictWriter(csvfile, fieldnames=self.mapping.keys())
