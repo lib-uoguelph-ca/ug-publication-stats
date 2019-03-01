@@ -43,8 +43,9 @@ class DB:
 
         authors = self.create_authors(record)
         article = self.create_article(record)
-        self.associate_authors(article, authors)
-        self.create_locations(record, article)
+        if article:
+            self.associate_authors(article, authors)
+            self.create_locations(record, article)
 
     def create_authors(self, record):
         authors = record.get_authors()
