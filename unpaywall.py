@@ -2,6 +2,8 @@ from storage.record import BaseArticleRecord, BaseAuthorRecord
 
 import urllib.parse
 import requests
+import threading
+import queue
 
 
 class UnpaywallClient:
@@ -15,7 +17,7 @@ class UnpaywallClient:
         """
         Fetch info on a single DOI fromt the API.
         :param doi: The doi to query
-        :return: JSON response data or None
+        :return: Response data or None
         """
         self.logger.debug(f"Unpaywall: Fetching DOI: {doi}")
 
@@ -133,3 +135,74 @@ class UnpaywallAuthor(BaseAuthorRecord):
             return record[key]
 
         return None
+
+
+class UnpaywallThread(threading.Thread):
+
+    def __init__(self, id, queue, email, results, logger=None):
+        threading.Thread.__init__(self)
+        self.queue = queue
+        self.id = id
+        self.logger = logger
+        self.results = results
+        self.client = UnpaywallClient(email, self.logger)
+        # Essentially a synchronized flag that's set when the thread is asked to stop (join)
+        self.stoprequest = threading.Event()
+
+    def run(self):
+        while not self.stoprequest.is_set():
+            try:
+                item = self.queue.get(timeout=0.5)
+            except queue.Empty:
+                continue
+
+            try:
+                result = self._do_request(item)
+                if result:
+                    self.results.append(result)
+            except requests.exceptions.RequestException:
+                self.logger.warn(f"Request failed: {item}")
+                continue
+
+            # send a signal to the queue that the job is done
+            self.queue.task_done()
+
+    """
+    Public method to signal that the thread has been asked to stop
+    """
+
+    def stop(self):
+        self.stoprequest.set()
+
+    def _do_request(self, item):
+        self.logger.debug(f"Thread {self.id}: Query {item}")
+        return self.client.lookup(item)
+
+class ThreadedUnpaywallClient:
+    def __init__(self, results, email, num_threads=3,thread_class=UnpaywallThread, logger=None):
+        self.queue = queue.Queue()
+        self.num_threads = num_threads
+        self.threads = []
+        self.thread_class = thread_class
+        self.logger = logger
+        self.results = results
+        self.email = email
+        self._init_threads()
+
+
+    def get_queue(self):
+        return self.queue
+
+    def _init_threads(self):
+        for i in range(self.num_threads):
+            thread = self.thread_class(i, self.queue, self.email, self.results, self.logger)
+            self.threads.append(thread)
+            thread.start()
+
+    def stop(self):
+        self.queue.join() # Blocks until all unfinished items have been processed.
+        self._cleanup()
+
+    def _cleanup(self):
+        for thread in self.threads:
+            thread.stop()
