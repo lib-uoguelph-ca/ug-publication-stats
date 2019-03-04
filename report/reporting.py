@@ -75,6 +75,18 @@ class Report(ABC):
         pass
 
     def get_values(self, record):
+        """
+        The get_values function iterates through self.mapping.
+        Each key in the mapping defines a column in the resultant CSV.
+
+        The value of the mapping can be:
+        * A string. Treat the record as a dict and try to fetch the attribute name listed in the string
+        * A callable. Call the function, passing in the record as a parameter.
+        * None. Add the column to the result set, but leave it blank.
+
+        :param record:
+        :return:
+        """
         result = {}
         for key, val in self.mapping.items():
             result[key] = self.get_value(record, key)
@@ -90,7 +102,7 @@ class Report(ABC):
         else:
             return ''
 
-    def _make_file_name(self):
+    def make_file_name(self):
         import re
         file_name = re.sub('[^\w\d-]', '-', self.name)
         return file_name

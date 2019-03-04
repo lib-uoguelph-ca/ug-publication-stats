@@ -20,7 +20,7 @@ class OACitationsCountReport(Report):
 
         for year in years:
 
-            file_name = self._make_file_name()
+            file_name = self.make_file_name()
             if not outfile:
                 file_name = f'./output/{file_name}-{year}.csv'
             else:
@@ -262,7 +262,7 @@ class OACitationsCountReport(Report):
 
     def _all_years(self, outfile):
 
-        file_name = self._make_file_name()
+        file_name = self.make_file_name()
         if not outfile:
             outfile = f'./output/{file_name}.csv'
         else:
@@ -293,7 +293,7 @@ class OACitationsCountReport(Report):
 
 
         if not outfile:
-            file_name = self._make_file_name()
+            file_name = self.make_file_name()
             outfile = f'./output/{file_name}.csv'
 
         num_articles = Article.select().count()

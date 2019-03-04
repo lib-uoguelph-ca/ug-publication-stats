@@ -33,3 +33,26 @@ optional arguments:
   --report [REPORT]     Name of report to run.
   --output OUTPUT, -o OUTPUT     Directory in which to write reports.
  ```
+
+## Adding Reports
+Reports are automatically loaded if the report class has been imported and it inherits from the Report base class. 
+
+In simple terms, the easiest way to add your own report is to:
+
+1. Add a new python file that contains your class to `report/reports`
+2. Make sure your class inherits from `report.reporting.Report`
+3. Implement the `run` function in your class.
+
+I recommend just duplicating, renaming, and modifying `BasicReport.py`
+
+You can interface with the database in one of two ways:
+* Via the Peewee ORM - Models are defined in models.py. See `BasicReport.py` for an example of this.
+* Via sqlite3. See `AuthorReport.py` for an example of this.
+
+The Report base class provides some convenience functions to implement reports. Namely:
+
+* `get_values(record)`: Automatically fetch values using the column mapping provided in the class. The mapping can define a callable function to extract the value from a record, an index to access in the record, or None to create an empty column. See the Report class for more details.
+* `get_value(record, key): Fetch a single value from the column mapping, following the logic outlined in `get_values()`.
+* `make_file_name()`: Using a report's name, produce a sanitized version usable as a file name. 
+
+

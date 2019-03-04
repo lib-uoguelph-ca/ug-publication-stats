@@ -48,7 +48,7 @@ class JournalReport(Report):
 
         print(f"Running {self.name}")
 
-        file_name = self._make_file_name()
+        file_name = self.make_file_name()
         if not outfile:
             outfile = f'./output/{file_name}.csv'
         else:
