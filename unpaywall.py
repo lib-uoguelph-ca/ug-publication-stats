@@ -31,6 +31,10 @@ class UnpaywallClient:
                 self.logger.error(f"Unpaywall request error for doi: {doi} - {error}")
 
             return None
+        except TypeError as error:
+            if self.logger:
+                self.logger.error(f"Can't escape DOI: {doi} - {error}")
+            return None
 
         data = response.json()
         return data
