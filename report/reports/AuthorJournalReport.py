@@ -1,8 +1,7 @@
-from models import db_file_name, Author
+from models import Author
 from report.reporting import Report
 
 from csv import DictWriter
-import sqlite3
 from collections import Counter
 
 
@@ -15,19 +14,12 @@ class AuthorJournalReport(Report):
         'first name': 'first_name',
         'last name': 'last_name',
         'college': 'college',
-        'department': 'department'
+        'department': 'department',
+        'journals': None,
     }
 
     def __init__(self):
-        conn = sqlite3.connect(db_file_name)
-        conn.row_factory = sqlite3.Row
-
-        self.conn = conn
-        self.cursor = conn.cursor()
         self.mapping['journals'] = self._get_journals
-
-    def __del__(self):
-        self.conn.close()
 
     def run(self, outfile=None):
 
@@ -50,6 +42,14 @@ class AuthorJournalReport(Report):
                     writer.writerow(self.get_values(result))
 
     def _get_journals(self, author):
+        """
+        Given an author record, return a string representing the list of jorunals that they have published in
+        along with the number of times they have published in each.
+
+        Note: Only counts Open access or hybrid publicaitons.
+        :param author: An author record
+        :return: A string representing the author's journal publication history.
+        """
         journal_list = []
         for article in author.articles:
             if article.article.oa or article.article.hybrid:
