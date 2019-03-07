@@ -32,7 +32,7 @@ class OACitationsCountReport(Report):
         conn = sqlite3.connect(db_file_name)
         c = conn.cursor()
 
-        results = c.execute("SELECT DISTINCT year FROM article").fetchall()
+        results = c.execute("SELECT DISTINCT year FROM article WHERE year IS NOT NULL").fetchall()
         years = [result[0] for result in results]
         years.sort()
         return years
