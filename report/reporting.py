@@ -55,10 +55,14 @@ class Reporter:
 class Report(ABC):
     """
     Abstract base class for encapsulating a report.
+    This class determines the external interface that each report must define.
     Every report must inherit from this class.
     """
 
+    # Determines the human readable name that will display in the report list, and the file name used when exporting.
     name = ""
+
+    # Just extra information describing the report itself.
     description = ""
 
     mapping = {}
@@ -93,6 +97,13 @@ class Report(ABC):
         return result
 
     def get_value(self, record, key):
+        """
+        Get a single value defined in self.mapping.
+
+        :param record: The record to get the value from.
+        :param key: The key to find in self.mapping.
+        :return: String, the value or None if the value can't be found.
+        """
         if isinstance(self.mapping[key], str):
             return getattr(record,self.mapping[key])
         elif callable(self.mapping[key]):
@@ -103,6 +114,10 @@ class Report(ABC):
             return ''
 
     def make_file_name(self):
+        """
+        Using the class' name attribute, generate a file name suitable for most filesystems.
+        :return: String, the file name.
+        """
         import re
         file_name = re.sub('[^\w\d-]', '-', self.name)
         return file_name
