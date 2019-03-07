@@ -84,7 +84,7 @@ class Report(ABC):
         Each key in the mapping defines a column in the resultant CSV.
 
         The value of the mapping can be:
-        * A string. Treat the record as a dict and try to fetch the attribute name listed in the string
+        * A string. Treat the record as an object and try to return the property name listed in the string.
         * A callable. Call the function, passing in the record as a parameter.
         * None. Add the column to the result set, but leave it blank.
 
@@ -105,7 +105,7 @@ class Report(ABC):
         :return: String, the value or None if the value can't be found.
         """
         if isinstance(self.mapping[key], str):
-            return getattr(record,self.mapping[key])
+            return getattr(record, self.mapping[key])
         elif callable(self.mapping[key]):
             return self.mapping[key](record)
         elif self.mapping[key] is None:
