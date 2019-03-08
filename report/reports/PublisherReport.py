@@ -16,6 +16,7 @@ class PublisherReport(Report):
         'hybrid count': lambda record: record['hybrid_count'],
         'bronze count': lambda record: record['bronze_count'],
         'green count': lambda record: record['green_count'],
+        'estimated apc cost': None
     }
 
     def __init__(self):
@@ -65,6 +66,11 @@ class PublisherReport(Report):
                 writer.writerow(self.get_values(result))
 
     def estimate_cost(self, record):
+        """
+        Use the average apc cost value to calculate an estimation of the cost paid to a publisher.
+        :param record: A record from the query above counting publications of each time for a publisher.
+        :return: Float - An estimated cost paid to the publisher.
+        """
 
         if record['average_apc']:
             record_count = record['oa_count'] + record['hybrid_count']
