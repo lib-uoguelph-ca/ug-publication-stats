@@ -71,7 +71,8 @@ class UnpaywallArticleRecord(BaseArticleRecord):
 
         self.metadata['hybrid'] = self.hybrid
         self.metadata['bronze'] = self.bronze
-        self.metadata['self_archived'] = self.green
+        self.metadata['self_archived'] = self.green > 0
+        self.metadata['self_archived_count'] = self.green
 
     def _set_flags(self, record):
         """

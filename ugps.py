@@ -23,7 +23,7 @@ def fetch(db, logger, args):
 
     dois = []
     if args.in_file:
-        dois = get_dois_from_xlsx('input/wos.xlsx')
+        dois = get_dois_from_xlsx(args.in_file)
     else:
         dois = get_dois()
 

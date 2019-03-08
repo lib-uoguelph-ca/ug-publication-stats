@@ -99,6 +99,7 @@ class DB:
                 hybrid=record.is_hybrid(),
                 bronze=record.is_bronze(),
                 self_archived=record.get_self_archived(),
+                self_archived_count=record.get_self_archived_count(),
                 doi=record.get_doi(),
                 doi_url=record.get_doi_url(),
                 citations=record.get_citations()

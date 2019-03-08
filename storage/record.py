@@ -46,6 +46,9 @@ class BaseArticleRecord(BaseRecord):
         def get_self_archived(self):
             return self._get_value('self_archived')
 
+        def get_self_archived_count(self):
+            return self._get_value('self_archived_count')
+
         def get_doi(self):
             return self._get_value('doi')
 
