@@ -26,6 +26,7 @@ class Publisher(BaseModel):
 
 class Journal(BaseModel):
     name = CharField()
+    average_apc = FloatField(null=True)
 
 
 class Article(BaseModel):
