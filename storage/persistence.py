@@ -38,7 +38,7 @@ class DB:
     def persist(self, record):
         """
         Save a record to the database.
-        :param record: A dictionary representing a record.
+        :param record: BaseArticleRecord
         """
 
         authors = self.create_authors(record)
@@ -48,6 +48,11 @@ class DB:
             self.create_locations(record, article)
 
     def create_authors(self, record):
+        """
+        Create (or find) authors for a given record.
+        :param record: BaseArticleRecord
+        :return: a list of Author models
+        """
         authors = record.get_authors()
 
         author_list = []
@@ -68,6 +73,11 @@ class DB:
         return author_list
 
     def create_publisher(self, record):
+        """
+        Create (or get if it already exists) a publisher for the given record
+        :param record: BaseArticleRecord
+        :return: A Publisher model
+        """
         try:
             result = result = Publisher.get_or_create(name=record.get_publisher())
             return result[0]
@@ -76,6 +86,11 @@ class DB:
             return None
 
     def create_journal(self, record):
+        """
+        Create (or get if it already exists) a journal for the given record
+        :param record: BaseArticleRecord
+        :return: A Journal model
+        """
         try:
             result = Journal.get_or_create(name=record.get_journal_title())
             return result[0]
@@ -84,6 +99,11 @@ class DB:
             return None
 
     def create_article(self, record):
+        """
+        Create an article record for the given record
+        :param record: BaseArticleRecord
+        :return: An Article model
+        """
         journal = self.create_journal(record)
         publisher = self.create_publisher(record)
 
@@ -112,6 +132,11 @@ class DB:
             return None
 
     def associate_authors(self, article, authors):
+        """
+        Create the links between an article and its authors
+        :param article: The article model
+        :param authors: A list of author models
+        """
         for author in authors:
             try:
                 Authored.get_or_create(author=author, article=article)
@@ -119,6 +144,12 @@ class DB:
                 self.logger.error(f'Author-Article integrity constraint failed for Article: {article.id}, Author: {author.id}')
 
     def create_locations(self, record, article):
+        """
+        Given a record, record the locations of all copies of the article.
+        :param record: BaseArticleRecord
+        :param article: The Article model
+        :return:
+        """
         locations = record.get_locations()
 
         # TODO: Locations should be implemented as some sort of value object,
