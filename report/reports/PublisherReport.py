@@ -16,6 +16,7 @@ class PublisherReport(Report):
         'hybrid count': lambda record: record['hybrid_count'],
         'bronze count': lambda record: record['bronze_count'],
         'green count': lambda record: record['green_count'],
+        'total count': lambda record: record['total_count'],
         'estimated apc cost': None
     }
 
@@ -38,6 +39,7 @@ class PublisherReport(Report):
                 sum(a.hybrid) as hybrid_count, 
                 sum(a.bronze) as bronze_count, 
                 sum(a.self_archived) as green_count,
+                count(a.id) as total_count,
                 p.average_apc as average_apc
             FROM article a 
             LEFT JOIN publisher p on a.publisher_id = p.id
