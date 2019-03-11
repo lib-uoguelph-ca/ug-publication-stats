@@ -17,6 +17,7 @@ class PublisherReport(Report):
         'bronze count': lambda record: record['bronze_count'],
         'green count': lambda record: record['green_count'],
         'total count': lambda record: record['total_count'],
+        'average apc cost': lambda record: record['average_apc'],
         'estimated apc cost': None
     }
 
