@@ -146,6 +146,13 @@ class DB:
                                   f'Article: {article.id}, Author: {author.id}')
 
     def create_journal_identifiers(self, journal, record):
+        """
+        Save journal identifiers
+
+        :param journal: The Journal object
+        :param record: Unpaywall record containing
+        :return: A list of JournalIdentifier objects
+        """
         identifiers = record.get_journal_identifiers()
 
         identifier_list = []
