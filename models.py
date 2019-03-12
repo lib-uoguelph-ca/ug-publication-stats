@@ -28,6 +28,10 @@ class Journal(BaseModel):
     name = CharField()
     average_apc = FloatField(null=True)
 
+class JournalIdentifier(BaseModel):
+    journal = ForeignKeyField(Journal, backref='identifiers')
+    type = CharField()
+    identifier = CharField()
 
 class Article(BaseModel):
     title = CharField()

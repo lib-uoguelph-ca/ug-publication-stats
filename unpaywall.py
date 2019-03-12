@@ -59,6 +59,7 @@ class UnpaywallArticleRecord(BaseArticleRecord):
         self.metadata['date'] = record['published_date']
         self.metadata['year'] = record['year']
         self.metadata['journal'] = record['journal_name']
+        self.metadata['journal_identifiers'] = record['journal_issns']
         self.metadata['type'] = record['genre']
         self.metadata['publisher'] = record['publisher']
         self.metadata['oa'] = record['is_oa']

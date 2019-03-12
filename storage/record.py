@@ -28,6 +28,9 @@ class BaseArticleRecord(BaseRecord):
         def get_journal_title(self):
             return self._get_value('journal')
 
+        def get_journal_identifiers(self):
+            return self._get_value('journal_identifiers')
+
         def get_type(self):
             return self._get_value('type')
 

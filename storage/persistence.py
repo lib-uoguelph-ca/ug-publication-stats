@@ -18,7 +18,7 @@ class DB:
 
         db = SqliteDatabase('ugps.db')
         with db:
-            db.create_tables([Author, Publisher, Journal, Article, Authored, Location])
+            db.create_tables([Author, Publisher, Journal, JournalIdentifier, Article, Authored, Location])
 
         return db
 
@@ -46,6 +46,7 @@ class DB:
         if article:
             self.associate_authors(article, authors)
             self.create_locations(record, article)
+            self.create_journal_identifiers(article.journal, record)
 
     def create_authors(self, record):
         """
@@ -141,7 +142,22 @@ class DB:
             try:
                 Authored.get_or_create(author=author, article=article)
             except IntegrityError:
-                self.logger.error(f'Author-Article integrity constraint failed for Article: {article.id}, Author: {author.id}')
+                self.logger.error(f'Author-Article integrity constraint failed for '
+                                  f'Article: {article.id}, Author: {author.id}')
+
+    def create_journal_identifiers(self, journal, record):
+        identifiers = record.get_journal_identifiers()
+
+        identifier_list = []
+        for identifier in identifiers.split(','):
+            try:
+                result = JournalIdentifier.get_or_create(journal=journal, type="issn", identifier=identifier)
+                identifier_list.append(result[0])
+            except IntegrityError:
+                self.logger.error(f'JournalIdentifier integrity constraint failed for '
+                                  f'Journal: {journal.name}, Identifier: {identifier}')
+
+        return identifier_list
 
     def create_locations(self, record, article):
         """
