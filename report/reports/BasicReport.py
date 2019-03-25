@@ -11,8 +11,8 @@ class BasicReport(Report):
     mapping = {
         'title': 'title',
         'publisher': 'title',
-        'journal': None,
-        'year': None,
+        'journal': lambda article: article.journal.name,
+        'year': 'year',
         'oa': 'oa',
         'hybrid': 'hybrid',
         'bronze': 'bronze',
