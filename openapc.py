@@ -13,16 +13,19 @@ class OpenAPC:
         self.logger = logging.getLogger('UGPS')
 
     def fetch_data(self):
-        self.fetch_publisher_data()
-        self.fetch_journal_data()
+        self.update_publisher_data()
+        self.update_journal_data()
 
-    def fetch_publisher_data(self):
+    def get_publisher_data(self):
         uri = "https://olap.intact-project.org/cube/combined/aggregate?drilldown=publisher&cut=&order=apc_amount_avg%3Adesc"
         r = requests.get(uri)
-
         data = r.json()
+        return data['cells']
 
-        for row in data['cells']:
+    def update_publisher_data(self):
+        data = self.get_publisher_data()
+
+        for row in data:
             publisher = Publisher.get_or_none(name=row['publisher'])
             self.logger.debug(f"Open APC Publisher Lookup - {row['publisher']}")
             if publisher:
@@ -30,13 +33,16 @@ class OpenAPC:
                 publisher.average_apc = row['apc_amount_avg']
                 publisher.save()
 
-    def fetch_journal_data(self):
+    def get_journal_data(self):
         uri = "https://olap.intact-project.org/cube/combined/aggregate?drilldown=journal_full_title&cut=&order=apc_amount_avg%3Adesc"
         r = requests.get(uri)
-
         data = r.json()
+        return data['cells']
 
-        for row in data['cells']:
+    def update_journal_data(self):
+        data = self.get_journal_data()
+
+        for row in data:
             journal = Journal.get_or_none(name=row['journal_full_title'])
             self.logger.debug(f"Open APC Journal Lookup - {row['journal_full_title']}")
             if journal:
