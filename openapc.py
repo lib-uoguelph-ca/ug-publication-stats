@@ -22,7 +22,7 @@ class OpenAPC:
         data = r.json()
         return data['cells']
 
-    def update_publisher_data(self):
+    def update_publisher_data(self, data=None):
         data = self.get_publisher_data()
 
         for row in data:

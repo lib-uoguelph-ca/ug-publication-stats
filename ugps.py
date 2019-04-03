@@ -6,6 +6,8 @@ from unpaywall import UnpaywallClient, UnpaywallArticleRecord, ThreadedUnpaywall
 from webofscience import get_dois_from_xlsx, get_dois
 import openapc
 from ugauthors import UgAuthorUpdater
+from doaj import DOAJClient
+import apc
 
 from ldap import LDAPClient
 import argparse
@@ -28,7 +30,7 @@ def fetch(db, logger, args):
         dois = get_dois()
 
     results = []  # Threaded clients will append results to this list.
-    uc = ThreadedUnpaywallClient(results, args.email, logger=logger)
+    uc = ThreadedUnpaywallClient(results, args.email, logger=logger, num_threads=6)
     queue = uc.get_queue()
 
     for doi in dois:
@@ -49,9 +51,9 @@ def fetch(db, logger, args):
         record.set_metadata('citations', citations)
         db.persist(record)
 
-    # Use OpenAPC to endpoint to fetch average APC costs for each publisher
-    oapc = openapc.OpenAPC()
-    oapc.fetch_data()
+    # Update APCs for journals and publishers.
+    apc_updater = apc.APCUpdater(logger)
+    apc_updater.update()
 
     # Identify local authors by searching for matches in the LDAP directory
     ldap_client = LDAPClient(
@@ -122,3 +124,6 @@ if args.fetch:
 
 if args.report:
     report(args.report, args.output)
+
+
+
