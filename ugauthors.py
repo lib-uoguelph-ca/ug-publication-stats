@@ -18,6 +18,7 @@ class UgAuthorUpdater:
         'School of Languages & Literature': 'College of Arts',
         'Integrative Biology': 'College of Biological Sciences',
         'Molecular & Cellular Biology': 'College of Biological Sciences',
+        'Molecular and Cellular Biology': 'College of Biological Sciences',
         'Human Health & Nutritional Science': 'College of Biological Sciences',
         'Department of Management': 'College of Business & Economics',
         'Economics and Finance': 'College of Business & Economics',
