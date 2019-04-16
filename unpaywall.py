@@ -168,7 +168,6 @@ class UnpaywallThread(threading.Thread):
                     self.results.append(result)
             except requests.exceptions.RequestException:
                 self.logger.warn(f"Request failed: {item}")
-                continue
 
             # send a signal to the queue that the job is done
             self.queue.task_done()
