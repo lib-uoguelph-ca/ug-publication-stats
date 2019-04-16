@@ -1,6 +1,6 @@
 from doaj import DOAJClient
 import openapc
-from models import Journal, JournalIdentifier
+from models import Journal, JournalIdentifier, Publisher
 from currency_converter import CurrencyConverter
 from datetime import date
 
@@ -17,8 +17,8 @@ class APCUpdater:
         self.exchange = Exchange()
 
     def update(self):
-        self.oapc.update_publisher_data()
-        self.update_journals()
+        # self.oapc.update_publisher_data()
+        # self.update_journals()
         self.update_publishers()
 
     def update_journals(self):
@@ -48,7 +48,17 @@ class APCUpdater:
                     journal.save()
 
     def update_publishers(self):
-        self.oapc.update_publisher_data()
+        data = self.oapc.get_publisher_data()
+
+        for row in data:
+            publisher = Publisher.get_or_none(name=row['publisher'])
+            self.logger.debug(f"Open APC Publisher Lookup - {row['publisher']}")
+            if publisher:
+                self.logger.debug("Matched Publisher")
+                publisher.average_apc = row['apc_amount_avg']
+                publisher.average_apc_unit = 'EUR'
+                publisher.average_apc_usd = self.exchange.convert_now(row['apc_amount_avg'], 'EUR')
+                publisher.save()
 
     def journal_update(self, journal, apcs):
         try:
