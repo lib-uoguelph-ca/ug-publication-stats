@@ -18,7 +18,8 @@ class JournalReport(Report):
         'green count': lambda record: record['green_count'],
         'total count': lambda record: record['total_count'],
         'average apc cost': lambda record: record['average_apc'],
-        'estimated apc cost': None
+        'estimated apc cost': None,
+        'citations': lambda record: record['citations']
     }
 
     def __init__(self):
@@ -43,7 +44,8 @@ class JournalReport(Report):
                 sum(a.bronze) as bronze_count, 
                 sum(a.self_archived) as green_count,
                 count(a.id) as total_count,
-                j.average_apc as average_apc
+                j.average_apc as average_apc,
+                sum(a.citations) as citations
             FROM article a 
             LEFT JOIN journal j on a.journal_id = j.id
             GROUP BY a.journal_id
