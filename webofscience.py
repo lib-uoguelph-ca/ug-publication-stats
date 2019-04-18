@@ -1,33 +1,48 @@
-from wos import WosClient
-import wos.utils
+from zeep import Client
 import secrets
-
-# with WosClient(secrets.WOS_USER, secrets.WOS_PASS) as client:
-#     print(wos.utils.query(client, 'OG="University of Guelph"'))
-
+from base64 import b64encode
 
 def get_dois():
     """
     Get a list of UG DOIs from the Web of Science API.
     :return: a list of DOIs
     """
+    dois = []
+    # with WosClient(secrets.WOS_USER, secrets.WOS_PASS, lite=True) as client:
+    #     result = wos.utils.query(client, 'OG=University of Guelph')
+    #     print(result)
+    session = get_session()
 
-    # We're just stubbing this out for now, because WOS hasn't approved my developer application yet.
-    dois = ["10.1016/j.foodchem.2018.12.028",
-            "10.1016/j.tourman.2018.10.025",
-            "10.1016/j.cej.2018.11.013",
-            "10.1016/j.foodqual.2018.10.010",
-            "10.1016/j.foodhyd.2018.09.003",
-            "10.1016/j.foodchem.2018.09.023",
-            "10.1016/j.foodchem.2018.09.010",
-            "10.1111/fwb.13220",
-            "10.1007/s11146-017-9623-2",
-            "10.1111/1744-7917.12488",
-            "10.1111/jac.12289",
-            "10.1016/j.aquaculture.2018.09.025",
-            "10.1016/j.biortech.2018.11.004]"]
+    session_header = f"SID={session}"
+    client = Client('http://search.webofknowledge.com/esti/wokmws/ws/WokSearchLite?wsdl')
+    with client.settings(extra_http_headers={'Cookie': session_header}):
+        query_parameters = {
+            "databaseId": "WOS",
+            "userQuery": "OG=University of Guelph",
+            "queryLanguage": "en"
+        }
+        retrieve_parameters = {
+            "firstRecord": 1,
+            "count": 100
+        }
+        result = client.service.search(queryParameters=query_parameters, retrieveParameters=retrieve_parameters)
+        pass
 
-    return dois
+
+def get_session():
+    auth_user = (b64encode(f"{secrets.WOS_USER}:{secrets.WOS_PASS}".encode('utf8'))).decode('utf8')
+    auth_header = f"Basic {auth_user}"
+    client = Client('http://search.webofknowledge.com/esti/wokmws/ws/WOKMWSAuthenticate?wsdl')
+
+    result = None
+    with client.settings(extra_http_headers={'Authorization': auth_header}):
+        result = client.service.authenticate()
+        pass
+
+    return result
+
+def format_result(item):
+    pass
 
 
 def get_dois_from_xlsx(file):
