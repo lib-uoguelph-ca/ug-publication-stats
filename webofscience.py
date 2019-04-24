@@ -8,7 +8,7 @@ class WebOfScienceClient:
     def __init__(self):
         self.session = self.get_session()
 
-    def get_dois(self):
+    def get_dois(self, query):
         """
         Get a list of UG DOIs from the Web of Science API.
         :return: a list of DOIs
@@ -25,7 +25,7 @@ class WebOfScienceClient:
         with client.settings(extra_http_headers={'Cookie': session_header}):
             query_parameters = {
                 "databaseId": "WOS",
-                "userQuery": "OG=University of Guelph",
+                "userQuery": query,
                 "queryLanguage": "en"
             }
             retrieve_parameters = {

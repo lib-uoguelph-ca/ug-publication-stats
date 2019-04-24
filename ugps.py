@@ -28,7 +28,7 @@ def fetch(db, logger, args):
         dois = get_dois_from_xlsx(args.in_file)
     else:
         wos_client = WebOfScienceClient()
-        dois = wos_client.get_dois()
+        dois = wos_client.get_dois("OG=University of Guelph")
 
     results = []  # Threaded clients will append results to this list.
     uc = ThreadedUnpaywallClient(results, args.email, logger=logger, num_threads=6)
