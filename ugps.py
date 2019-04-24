@@ -3,11 +3,11 @@ from storage.persistence import DB
 from report.reporting import Reporter
 from report.reports import *
 from unpaywall import UnpaywallClient, UnpaywallArticleRecord, ThreadedUnpaywallClient
-from webofscience import get_dois_from_xlsx, get_dois
 import openapc
 from ugauthors import UgAuthorUpdater
 from doaj import DOAJClient
 import apc
+from webofscience import WebOfScienceClient, get_dois_from_xlsx
 
 from ldap import LDAPClient
 import argparse
@@ -27,7 +27,8 @@ def fetch(db, logger, args):
     if args.in_file:
         dois = get_dois_from_xlsx(args.in_file)
     else:
-        dois = get_dois()
+        wos_client = WebOfScienceClient()
+        dois = wos_client.get_dois()
 
     results = []  # Threaded clients will append results to this list.
     uc = ThreadedUnpaywallClient(results, args.email, logger=logger, num_threads=6)
