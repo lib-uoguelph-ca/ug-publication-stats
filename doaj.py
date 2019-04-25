@@ -1,7 +1,6 @@
 import urllib.parse
 import requests
 
-
 class DOAJClient:
 
     base_url = "https://doaj.org/api/v1/"
@@ -20,13 +19,13 @@ class DOAJClient:
 
         except requests.exceptions.HTTPError as error:
             if self.logger:
-                self.logger.error(f"Unpaywall request error for doi: {doi} - {error}")
+                self.logger.error(f"DOAJ request error for ISSN: {issn} - {error}")
 
             return None
 
         except TypeError as error:
             if self.logger:
-                self.logger.error(f"Can't escape DOI: {doi} - {error}")
+                self.logger.error(f"Can't escape ISSN: {issn} - {error}")
 
             return None
 

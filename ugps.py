@@ -52,10 +52,12 @@ def fetch(db, logger, args):
         record.set_metadata('citations', citations)
         db.persist(record)
 
+def apc_update(logger):
     # Update APCs for journals and publishers.
     apc_updater = apc.APCUpdater(logger)
     apc_updater.update()
 
+def local_update():
     # Identify local authors by searching for matches in the LDAP directory
     ldap_client = LDAPClient(
         secrets.LDAP_ENDPOINT,
@@ -66,7 +68,6 @@ def fetch(db, logger, args):
     )
     ug_author_updater = UgAuthorUpdater(ldap_client)
     ug_author_updater.update_authors()
-
 
 def report(report, outfile=None):
     """
@@ -99,6 +100,8 @@ cli.add_argument('--wospass', action='store', default=secrets.WOS_PASS, help='We
 cli.add_argument('--in_file', '-i', action='store', help='Input file (exported from web of science search)')
 cli.add_argument('-v', action='store_true')
 cli.add_argument('-vv', action='store_true')
+cli.add_argument('--apc', action='store_true', help="Fetch and estimate APC costs.")
+cli.add_argument('--local', action='store_true',  help="Identify local authors.")
 
 cli.add_argument('--report', action='store', help='Name of report to run.', nargs='?', const="list", default=False)
 cli.add_argument('--output', '-o', action='store', default=None, help='Directory in which to write reports.')
@@ -123,8 +126,16 @@ logger.addHandler(handler)
 if args.fetch:
     fetch(db, logger, args)
 
+if args.apc:
+    apc_update(logger)
+
+if args.local:
+    local_update()
+
 if args.report:
     report(args.report, args.output)
+
+
 
 
 

@@ -3,6 +3,7 @@ import openapc
 from models import Journal, JournalIdentifier, Publisher
 from currency_converter import CurrencyConverter
 from datetime import date
+from time import sleep
 
 
 class APCUpdater:
@@ -18,7 +19,7 @@ class APCUpdater:
 
     def update(self):
         # self.oapc.update_publisher_data()
-        # self.update_journals()
+        self.update_journals()
         self.update_publishers()
 
     def update_journals(self):
@@ -88,6 +89,7 @@ class APCUpdater:
         for identifier in journal.identifiers:
             if identifier.type == "issn":
                 data = self.doaj.get_journal_by_issn(identifier.identifier)
+                sleep(1)
 
             if data is not None:
                 try:
