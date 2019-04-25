@@ -1,12 +1,15 @@
 from zeep import Client
+from zeep.exceptions import Fault as ZeepFault
 import secrets
+from time import sleep
 from base64 import b64encode
 
 
 class WebOfScienceClient:
 
-    def __init__(self):
+    def __init__(self, logger):
         self.session = self.get_session()
+        self.logger = logger
 
     def get_dois(self, query):
         """
@@ -21,6 +24,7 @@ class WebOfScienceClient:
         session_header = f"SID={self.session}"
         client = Client('http://search.webofknowledge.com/esti/wokmws/ws/WokSearchLite?wsdl')
         rpp = 100
+        request_delay = 1
 
         with client.settings(extra_http_headers={'Cookie': session_header}):
             query_parameters = {
@@ -32,15 +36,23 @@ class WebOfScienceClient:
                 "firstRecord": 1,
                 "count": rpp
             }
-            result = client.service.search(queryParameters=query_parameters, retrieveParameters=retrieve_parameters)
-            num_results = result.recordsFound
 
-            for i in range(rpp, num_results, rpp):
-                retrieve_parameters['firstRecord'] = i
-                results = client.service.search(queryParameters=query_parameters, retrieveParameters=retrieve_parameters)
+            try:
 
-                for result in results['records']:
-                    dois = dois + self.format_result(result)
+                result = client.service.search(queryParameters=query_parameters, retrieveParameters=retrieve_parameters)
+                num_results = result.recordsFound
+
+                for i in range(rpp, num_results, rpp):
+                    self.logger.debug(f"WOS query {i} of {num_results}")
+                    retrieve_parameters['firstRecord'] = i
+                    results = client.service.search(queryParameters=query_parameters, retrieveParameters=retrieve_parameters)
+
+                    for result in results['records']:
+                        dois = dois + self.format_result(result)
+
+                    sleep(request_delay)
+            except ZeepFault as e:
+                self.logger.error(f"WOS Returned error: {e.message}")
 
         return dois
 
@@ -52,7 +64,6 @@ class WebOfScienceClient:
         result = None
         with client.settings(extra_http_headers={'Authorization': auth_header}):
             result = client.service.authenticate()
-            pass
 
         return result
 
@@ -67,7 +78,7 @@ class WebOfScienceClient:
         return identifiers
 
 
-def get_dois_from_xlsx(self, file):
+def get_dois_from_xlsx(file):
     import pandas as pd
 
     data = pd.read_excel(file)

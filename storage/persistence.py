@@ -155,6 +155,9 @@ class DB:
         """
         identifiers = record.get_journal_identifiers()
 
+        if not identifiers:
+            return
+
         identifier_list = []
         for identifier in identifiers.split(','):
             try:
