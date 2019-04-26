@@ -72,7 +72,7 @@ class WebOfScienceClient:
 
         identifiers = []
         for data in metadata:
-            if data['label'] == 'Identifier.Xref_Doi':
+            if "Doi" in data['label']:
                 identifiers = identifiers + data['value']
 
         return identifiers
