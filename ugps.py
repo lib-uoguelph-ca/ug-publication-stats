@@ -28,12 +28,13 @@ def fetch(db, logger, args):
         dois = get_dois_from_xlsx(args.in_file)
     else:
         wos_client = WebOfScienceClient(logger)
-        dois = wos_client.get_dois('OG=("University of Guelph")')
+        dois = wos_client.get_dois('OG=(University of Guelph)')
 
     results = []  # Threaded clients will append results to this list.
     uc = ThreadedUnpaywallClient(results, args.email, logger=logger, num_threads=6)
     queue = uc.get_queue()
 
+    logger.debug(f"Unpaywall fetching {len(dois)} DOIs")
     for doi in dois:
         queue.put(doi)
 
@@ -44,6 +45,8 @@ def fetch(db, logger, args):
         continue
 
     uc.stop()
+
+    logger.debug(f"Unpaywall fetched {len(results)} results")
 
     # Further processing of the results.
     for result in results:

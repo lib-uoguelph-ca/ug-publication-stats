@@ -10,6 +10,7 @@ class WebOfScienceClient:
     def __init__(self, logger):
         self.session = self.get_session()
         self.logger = logger
+        self.failures = 0
 
     def get_dois(self, query):
         """
@@ -38,19 +39,22 @@ class WebOfScienceClient:
             }
 
             try:
-
                 result = client.service.search(queryParameters=query_parameters, retrieveParameters=retrieve_parameters)
                 num_results = result.recordsFound
 
-                for i in range(rpp, num_results, rpp):
-                    self.logger.debug(f"WOS query {i} of {num_results}")
-                    retrieve_parameters['firstRecord'] = i
+                pages = int(num_results / rpp) + 1
+                for i in range(0, pages):
+                    self.logger.debug(f"WOS query page {i + 1} of {pages}")
+                    retrieve_parameters['firstRecord'] = 1 + (i * rpp)
                     results = client.service.search(queryParameters=query_parameters, retrieveParameters=retrieve_parameters)
 
                     for result in results['records']:
                         dois = dois + self.format_result(result)
 
                     sleep(request_delay)
+
+                self.logger.debug(f"Processed {num_results}, {self.failures} failures")
+
             except ZeepFault as e:
                 self.logger.error(f"WOS Returned error: {e.message}")
 
@@ -71,9 +75,14 @@ class WebOfScienceClient:
         metadata = item['other']
 
         identifiers = []
+
         for data in metadata:
             if "Doi" in data['label']:
                 identifiers = identifiers + data['value']
+
+        if len(identifiers) == 0:
+            self.logger.debug(f"Couldn't find DOI")
+            self.failures = self.failures + 1
 
         return identifiers
 

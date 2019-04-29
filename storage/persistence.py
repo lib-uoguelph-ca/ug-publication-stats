@@ -68,7 +68,7 @@ class DB:
 
                 author_list.append(result[0])
             except IntegrityError:
-                self.logger.error(f'Author integrity constraint failed for DOI: {record.get_doi()}')
+                self.logger.error(f'Author integrity constraint failed for DOI: {record.get_doi()} - {author.get_first_name()} {author.get_last_name()}')
                 continue
 
         return author_list
@@ -129,7 +129,7 @@ class DB:
             return result[0]
 
         except IntegrityError:
-            self.logger.error(f'Journal integrity constraint failed for DOI: {record.get_doi()}')
+            self.logger.error(f'Article integrity constraint failed for DOI: {record.get_doi()}')
             return None
 
     def associate_authors(self, article, authors):
