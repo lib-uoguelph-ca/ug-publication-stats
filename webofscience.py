@@ -11,6 +11,21 @@ class WebOfScienceClient:
         self.session = self.get_session()
         self.logger = logger
         self.failures = 0
+        self.rpp = 100
+
+        self.query_parameters = {
+            "databaseId": "WOS",
+            "userQuery": '',
+            "queryLanguage": "en"
+        }
+
+        self.retrieve_parameters = {
+            "firstRecord": 1,
+            "count": self.rpp
+        }
+
+        self.client = Client('http://search.webofknowledge.com/esti/wokmws/ws/WokSearchLite?wsdl')
+
 
     def get_dois(self, query):
         """
@@ -23,42 +38,41 @@ class WebOfScienceClient:
         #     print(result)
 
         session_header = f"SID={self.session}"
-        client = Client('http://search.webofknowledge.com/esti/wokmws/ws/WokSearchLite?wsdl')
-        rpp = 100
         request_delay = 1
+        self.query_parameters['userQuery'] = query
 
-        with client.settings(extra_http_headers={'Cookie': session_header}):
-            query_parameters = {
-                "databaseId": "WOS",
-                "userQuery": query,
-                "queryLanguage": "en"
-            }
-            retrieve_parameters = {
-                "firstRecord": 1,
-                "count": rpp
-            }
+        with self.client.settings(extra_http_headers={'Cookie': session_header}):
 
-            try:
-                result = client.service.search(queryParameters=query_parameters, retrieveParameters=retrieve_parameters)
-                num_results = result.recordsFound
+            num_results = self.get_num_results()
 
-                pages = int(num_results / rpp) + 1
-                for i in range(0, pages):
-                    self.logger.debug(f"WOS query page {i + 1} of {pages}")
-                    retrieve_parameters['firstRecord'] = 1 + (i * rpp)
-                    results = client.service.search(queryParameters=query_parameters, retrieveParameters=retrieve_parameters)
+            pages = int(num_results / self.rpp) + 1
+            for i in range(0, pages):
+                self.logger.debug(f"WOS query page {i + 1} of {pages}")
+                self.retrieve_parameters['firstRecord'] = 1 + (i * self.rpp)
 
-                    for result in results['records']:
-                        dois = dois + self.format_result(result)
+                retry_wos_query = retry(self.client.service.search)
+                results = retry_wos_query(queryParameters=self.query_parameters, retrieveParameters=self.retrieve_parameters)
 
-                    sleep(request_delay)
+                for result in results['records']:
+                    dois = dois + self.format_result(result)
 
-                self.logger.debug(f"Processed {num_results}, {self.failures} failures")
+                sleep(request_delay)
 
-            except ZeepFault as e:
-                self.logger.error(f"WOS Returned error: {e.message}")
+            self.logger.debug(f"Processed {num_results}, {self.failures} failures")
 
         return dois
+
+    def get_num_results(self):
+        num_results = 0
+
+        try:
+            result = self.client.service.search(queryParameters=self.query_parameters, retrieveParameters=self.retrieve_parameters)
+            num_results = result.recordsFound
+        except ZeepFault as e:
+            self.logger.error(f"WOS Returned error: {e.message}")
+
+        return num_results
+
 
     def get_session(self):
         auth_user = (b64encode(f"{secrets.WOS_USER}:{secrets.WOS_PASS}".encode('utf8'))).decode('utf8')
@@ -93,3 +107,34 @@ def get_dois_from_xlsx(file):
     data = pd.read_excel(file)
     data.dropna(subset=['DI'], inplace=True)
     return data['DI']
+
+
+def retry(func, max=3, logger=None):
+    """
+    A function decorator, that wraps a function call in logic to retry the call if an exception is thrown.
+
+    :param func: The function to attempt
+    :param max: The maximum number of attempts to make
+    :param logger: Optional logger for debug information.
+    :return: A retry function.
+    """
+
+    def retry_function(*args, **kwargs):
+        retries = 0
+        while True:
+            try:
+                results = func(*args, **kwargs)
+                return results
+            except Exception as e:
+
+                if logger:
+                    logger.debug(f"Retry error: {e.message}. Trying again ({retry + 1} of {max}  attempts)")
+
+                retries = retries + 1
+
+                if retries >= max:
+                    raise Exception("Too many retries.")
+
+                continue
+
+    return retry_function
