@@ -56,7 +56,7 @@ You can interface with the database in one of two ways:
 The Report base class provides some convenience functions to implement reports. Namely:
 
 * `get_values(record)`: Automatically fetch values using the column mapping provided in the class. The mapping can define a callable function to extract the value from a record, an property to access in the record object, or None to create an empty column. See the Report class for more details.
-* `get_value(record, key): Fetch a single value from the column mapping, following the logic outlined in `get_values()`.
+* `get_value(record, key)`: Fetch a single value from the column mapping, following the logic outlined in `get_values()`.
 * `make_file_name()`: Using a report's name, produce a sanitized version usable as a file name. 
 
 
