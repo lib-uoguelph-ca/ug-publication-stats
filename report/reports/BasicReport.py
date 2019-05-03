@@ -10,7 +10,7 @@ class BasicReport(Report):
 
     mapping = {
         'title': 'title',
-        'publisher': 'title',
+        'publisher': lambda article: article.publisher.name,
         'journal': lambda article: article.journal.name,
         'year': 'year',
         'oa': 'oa',
@@ -18,7 +18,9 @@ class BasicReport(Report):
         'bronze': 'bronze',
         'self_archived': 'self_archived',
         'doi': 'doi',
-        'doi_url': 'doi_url'
+        'doi_url': 'doi_url',
+        'citations': 'citations',
+        'apc': lambda article: article.journal.average_apc_usd
     }
 
     def run(self, outfile=None):
