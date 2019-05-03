@@ -42,7 +42,7 @@ class WebOfScienceClient:
 
             pages = int(num_results / self.rpp) + 1
             for i in range(0, pages):
-                self.logger.debug(f"WOS query page {i + 1} of {pages}")
+                self.logger.info(f"WOS query page {i + 1} of {pages}")
                 self.retrieve_parameters['firstRecord'] = 1 + (i * self.rpp)
 
                 retry_wos_query = retry(self.client.service.search, logger=self.logger)
@@ -142,7 +142,7 @@ def retry(func, max=3, logger=None):
             except Exception as e:
 
                 if logger:
-                    logger.debug(f"Retry error: {e.message}. Trying again ({retry + 1} of {max}  attempts)")
+                    logger.debug(f"Retry error: {e.message}. Trying again ({retries + 1} of {max}  attempts)")
 
                 retries = retries + 1
 
