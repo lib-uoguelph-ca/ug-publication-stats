@@ -15,28 +15,27 @@ If you don't populate secrets.py, you'll have to use the command line arguments 
 
 ### Command Line Arguments
 ```
-usage: ugps.py [-h] [--fetch] [--email EMAIL] [--wosuser WOSUSER]
-               [--wospass WOSPASS] [--in_file IN_FILE] [-v] [-vv] [--apc]
-               [--local] [--report [REPORT]] [--output OUTPUT]
+usage: ugps.py [-h] [--fetch] [--query QUERY] [--email EMAIL]
+               [--wosuser WOSUSER] [--wospass WOSPASS] [--in_file IN_FILE]
+               [--apc] [--local] [--report [REPORT]] [--output OUTPUT] [-v]
+               [-vv]
 
 Fetch UG OA data and run reports.
 
 optional arguments:
-  -h, --help            show this help message and exit
-  --fetch               Fetch data from data sources.
-  --email EMAIL, -e EMAIL
-                        Email used to communicate with the Unpaywall API.
-  --wosuser WOSUSER     Web of Science user ID
-  --wospass WOSPASS     Web of Science password
-  --in_file IN_FILE, -i IN_FILE
-                        Input file (exported from web of science search)
+  -h, --help                        show this help message and exit
+  --fetch                           Fetch data from data sources.
+  --query QUERY, -q QUERY           Web of Science query
+  --email EMAIL, -e EMAIL           Email used to communicate with the Unpaywall API.
+  --wosuser WOSUSER                 Web of Science user ID
+  --wospass WOSPASS                 Web of Science password
+  --in_file IN_FILE, -i IN_FILE     Input file (exported from web of science search)
+  --apc                             Fetch and estimate APC costs.
+  --local                           Identify local authors.
+  --report [REPORT]                 Name of report to run.
+  --output OUTPUT, -o OUTPUT        Directory in which to write reports.
   -v
   -vv
-  --apc                 Fetch and estimate APC costs.
-  --local               Identify local authors.
-  --report [REPORT]     Name of report to run.
-  --output OUTPUT, -o OUTPUT
-                        Directory in which to write reports.
  ```
 
 ## Adding Reports
