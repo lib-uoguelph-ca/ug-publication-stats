@@ -28,7 +28,7 @@ def fetch(db, logger, args):
         dois = get_dois_from_xlsx(args.in_file)
     else:
         wos_client = WebOfScienceClient(logger)
-        dois = wos_client.get_dois('OG=(University of Guelph)')
+        dois = wos_client.get_dois(args.query)
 
     results = []  # Threaded clients will append results to this list.
     uc = ThreadedUnpaywallClient(results, args.email, logger=logger, num_threads=6)
@@ -97,6 +97,7 @@ def report(report, outfile=None):
 # Set up command line arguments.
 cli = argparse.ArgumentParser(description='Fetch UG OA data and run reports.')
 cli.add_argument('--fetch', action='store_true', help='Fetch data from data sources.')
+cli.add_argument('--query', '-q', action='store', default="OG=(University of Guelph)", help='Web of Science query')
 cli.add_argument('--email', '-e', action='store', default=secrets.UNPAYWALL_EMAIL, help='Email used to communicate with the Unpaywall API.')
 cli.add_argument('--wosuser', action='store', default=secrets.WOS_USER, help='Web of Science user ID')
 cli.add_argument('--wospass', action='store', default=secrets.WOS_PASS, help='Web of Science password')
