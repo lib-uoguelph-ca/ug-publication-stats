@@ -102,13 +102,14 @@ cli.add_argument('--email', '-e', action='store', default=secrets.UNPAYWALL_EMAI
 cli.add_argument('--wosuser', action='store', default=secrets.WOS_USER, help='Web of Science user ID')
 cli.add_argument('--wospass', action='store', default=secrets.WOS_PASS, help='Web of Science password')
 cli.add_argument('--in_file', '-i', action='store', help='Input file (exported from web of science search)')
-cli.add_argument('-v', action='store_true')
-cli.add_argument('-vv', action='store_true')
 cli.add_argument('--apc', action='store_true', help="Fetch and estimate APC costs.")
 cli.add_argument('--local', action='store_true',  help="Identify local authors.")
 
 cli.add_argument('--report', action='store', help='Name of report to run.', nargs='?', const="list", default=False)
 cli.add_argument('--output', '-o', action='store', default=None, help='Directory in which to write reports.')
+
+cli.add_argument('-v', action='store_true')
+cli.add_argument('-vv', action='store_true')
 args = cli.parse_args()
 
 # Set up our logging
